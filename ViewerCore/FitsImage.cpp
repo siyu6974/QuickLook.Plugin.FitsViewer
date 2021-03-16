@@ -116,27 +116,27 @@ ImageSize FitsImage::getFinalSize()
 
 
 void super_pixel_RGGB(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
-//void super_pixel_BGGR(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
-//void super_pixel_GBRG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
-//void super_pixel_GRBG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
+void super_pixel_BGGR(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
+void super_pixel_GBRG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
+void super_pixel_GRBG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height);
 
 
 void super_pixel(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height, string pattern) {
 	if (pattern == "RGGB") {
 		super_pixel_RGGB(buf, newbuf, width, height);
 	}
-	//else if (pattern == "BGGR") {
-	//	super_pixel_BGGR(buf, newbuf, width, height);
-	//}
-	//else if (pattern == "GBRG") {
-	//	super_pixel_GRBG(buf, newbuf, width, height);
-	//}
-	//else if (pattern == "GRBG") {
-	//	super_pixel_GRBG(buf, newbuf, width, height);
-	//}
-	//else {
-	//	throw 0;
-	//}
+	else if (pattern == "BGGR") {
+		super_pixel_BGGR(buf, newbuf, width, height);
+	}
+	else if (pattern == "GBRG") {
+		super_pixel_GRBG(buf, newbuf, width, height);
+	}
+	else if (pattern == "GRBG") {
+		super_pixel_GRBG(buf, newbuf, width, height);
+	}
+	else {
+		throw 0;
+	}
 }
 
 
@@ -171,101 +171,98 @@ void super_pixel_RGGB(const std::valarray<float> buf, std::valarray<float>& newb
 	});
 }
 
-//
-//void super_pixel_BGGR(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
-//	dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
-//	dispatch_apply(3, queue, ^ (size_t ch) {
-//		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
-//			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
-//				int idx = ch * width * height / 4 + iout * width / 2 + jout;
-//				int cur = row * width + col;
-//				int right = cur + 1;
-//				int down = cur + width;
-//				int down_right = down + 1;
-//
-//				switch (ch) {
-//				case 0: {
-//					newbuf[idx] = buf[down_right];
-//					break;
-//				}
-//				case 1: {
-//					float tmp = buf[right] + buf[down];
-//					tmp /= 2;
-//					newbuf[idx] = tmp;
-//					break;
-//				}
-//				case 2: {
-//					newbuf[idx] = buf[cur];
-//					break;
-//				}
-//				}
-//			}
-//		}
-//	});
-//}
-//
-//
-//void super_pixel_GBRG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
-//	dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
-//	dispatch_apply(3, queue, ^ (size_t ch) {
-//		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
-//			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
-//				int idx = ch * width * height / 4 + iout * width / 2 + jout;
-//				int cur = row * width + col;
-//				int right = cur + 1;
-//				int down = cur + width;
-//				int down_right = down + 1;
-//
-//				switch (ch) {
-//				case 0: {
-//					newbuf[idx] = buf[down];
-//					break;
-//				}
-//				case 1: {
-//					float tmp = buf[cur] + buf[down_right];
-//					tmp /= 2;
-//					newbuf[idx] = tmp;
-//					break;
-//				}
-//				case 2: {
-//					newbuf[idx] = buf[right];
-//					break;
-//				}
-//				}
-//			}
-//		}
-//	});
-//}
-//
-//
-//void super_pixel_GRBG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
-//	dispatch_queue_t queue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0);
-//	dispatch_apply(3, queue, ^ (size_t ch) {
-//		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
-//			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
-//				int idx = ch * width * height / 4 + iout * width / 2 + jout;
-//				int cur = row * width + col;
-//				int right = cur + 1;
-//				int down = cur + width;
-//				int down_right = down + 1;
-//
-//				switch (ch) {
-//				case 0: {
-//					newbuf[idx] = buf[right];
-//					break;
-//				}
-//				case 1: {
-//					float tmp = buf[cur] + buf[down_right];
-//					tmp /= 2;
-//					newbuf[idx] = tmp;
-//					break;
-//				}
-//				case 2: {
-//					newbuf[idx] = buf[down];
-//					break;
-//				}
-//				}
-//			}
-//		}
-//	});
-//}
+
+void super_pixel_BGGR(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
+	parallel_for(size_t(0), size_t(3), [&](size_t ch) {
+		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
+			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
+				int idx = ch * width * height / 4 + iout * width / 2 + jout;
+				int cur = row * width + col;
+				int right = cur + 1;
+				int down = cur + width;
+				int down_right = down + 1;
+
+				switch (ch) {
+				case 0: {
+					newbuf[idx] = buf[down_right];
+					break;
+				}
+				case 1: {
+					float tmp = buf[right] + buf[down];
+					tmp /= 2;
+					newbuf[idx] = tmp;
+					break;
+				}
+				case 2: {
+					newbuf[idx] = buf[cur];
+					break;
+				}
+				}
+			}
+		}
+	});
+}
+
+
+void super_pixel_GBRG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
+	parallel_for(size_t(0), size_t(3), [&](size_t ch) {
+		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
+			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
+				int idx = ch * width * height / 4 + iout * width / 2 + jout;
+				int cur = row * width + col;
+				int right = cur + 1;
+				int down = cur + width;
+				int down_right = down + 1;
+
+				switch (ch) {
+				case 0: {
+					newbuf[idx] = buf[down];
+					break;
+				}
+				case 1: {
+					float tmp = buf[cur] + buf[down_right];
+					tmp /= 2;
+					newbuf[idx] = tmp;
+					break;
+				}
+				case 2: {
+					newbuf[idx] = buf[right];
+					break;
+				}
+				}
+			}
+		}
+	});
+}
+
+
+void super_pixel_GRBG(const std::valarray<float> buf, std::valarray<float>& newbuf, int width, int height) {
+	parallel_for(size_t(0), size_t(3), [&](size_t ch) {
+		for (int row = 0, iout = 0; iout < height / 2; row += 2, iout++) {
+			for (int col = 0, jout = 0; jout < width / 2; col += 2, jout++) {
+				int idx = ch * width * height / 4 + iout * width / 2 + jout;
+				int cur = row * width + col;
+				int right = cur + 1;
+				int down = cur + width;
+				int down_right = down + 1;
+
+				switch (ch) {
+				case 0: {
+					newbuf[idx] = buf[right];
+					break;
+				}
+				case 1: {
+					float tmp = buf[cur] + buf[down_right];
+					tmp /= 2;
+					newbuf[idx] = tmp;
+					break;
+				}
+				case 2: {
+					newbuf[idx] = buf[down];
+					break;
+				}
+				}
+			}
+		}
+	});
+}
