@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using QuickLook.Common.Plugin;
 
-namespace QuickLook.Plugin.HelloWorld
+namespace QuickLook.Plugin.FitsQL
 {
     public class Plugin : IViewer
     {
