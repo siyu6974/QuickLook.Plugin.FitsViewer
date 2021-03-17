@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -49,7 +49,12 @@ namespace StandaloneViewer
         {
             InitializeComponent();
 
-            string path = "E:/temp/2020-01-02-1456_6-CapObj_0000.FIT";
+            //string path = "E:/temp/2020-01-02-1456_6-CapObj_0000.FIT";
+            string path = "E:/temp/3ch.fit";
+            //string path = "E:/temp/float.fit";
+            
+            //string path = "E:/temp/小房牛 M31-009B.fit";
+
             var fitsImage = FitsImageCreate(Marshal.StringToHGlobalAnsi(path));
             ImageSize size = FitsImageSize(fitsImage);
             Console.WriteLine(size.nx);
@@ -63,7 +68,7 @@ namespace StandaloneViewer
             FitsImageData(fitsImage, img);
 
 
-            PixelFormat pf = PixelFormats.Rgb24;
+            //PixelFormat pf = PixelFormats.Rgb24;
             //int width = 200;
             //int height = 200;
             //int rawStride = (width * pf.BitsPerPixel + 7) / 8;
@@ -79,14 +84,14 @@ namespace StandaloneViewer
             //    rawImage, rawStride);
 
             BitmapSource bitmapSource;
-            int rawStride = bufferSize.nx * 3;
+            int rawStride = bufferSize.nx * bufferSize.nc;
             if (bufferSize.nc == 3)
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, pf, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
             }
             else
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
 
             Image.Source = bitmapSource;
