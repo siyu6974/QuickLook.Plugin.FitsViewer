@@ -37,8 +37,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="C:\Users\siyu\Desktop\CCfits\CCfits.build\CCfits.lib" />
     <Library Include="cfitsio.lib" />
+    <Library Include="CCfits.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cfitsio.dll" />
