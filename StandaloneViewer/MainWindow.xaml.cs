@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,19 +29,19 @@ namespace StandaloneViewer
     /// </summary>
     public partial class MainWindow : Window
     {
-        [DllImport(@"cpp_dll.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         public static extern IntPtr FitsImageCreate(IntPtr path);
 
-        [DllImport(@"cpp_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern ImageSize FitsImageSize(IntPtr ptr);
 
-        [DllImport(@"cpp_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void FitsImageData(IntPtr ptr, byte[] data);
 
-        [DllImport(@"cpp_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr FitsImageHeader(IntPtr ptr);
 
-        [DllImport(@"cpp_dll.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern ImageSize FitsImageBufferSize(IntPtr ptr);
 
 
