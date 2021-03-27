@@ -37,11 +37,12 @@ using System.Runtime.InteropServices;
 
 namespace StandaloneViewer
 {
-    public struct ImageSize
+    public struct ImageMeta
     {
         public int nx;
         public int ny;
         public int nc;
+        public int depth;
     };
 
     /// <summary>
@@ -53,16 +54,16 @@ namespace StandaloneViewer
         public static extern IntPtr FitsImageCreate(IntPtr path);
 
         [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageSize FitsImageSize(IntPtr ptr);
+        public static extern ImageMeta FitsImageGetMeta(IntPtr ptr);
 
         [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void FitsImageData(IntPtr ptr, byte[] data);
+        public static extern void FitsImageGetPixData(IntPtr ptr, byte[] data);
 
         [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr FitsImageHeader(IntPtr ptr);
+        public static extern IntPtr FitsImageGetHeader(IntPtr ptr);
 
         [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageSize FitsImageBufferSize(IntPtr ptr);
+        public static extern ImageMeta FitsImageGetOutputSize(IntPtr ptr);
 
 
         public MainWindow()
@@ -76,32 +77,15 @@ namespace StandaloneViewer
             //string path = "E:/temp/小房牛 M31-009B.fit";
 
             var fitsImage = FitsImageCreate(Marshal.StringToHGlobalAnsi(path));
-            ImageSize size = FitsImageSize(fitsImage);
-            Console.WriteLine(size.nx);
+            ImageMeta size = FitsImageGetMeta(fitsImage);
 
             // NOT WORKING
             //string h = Marshal.PtrToStringAnsi(FitsImageHeader(fitsImage));
 
-            ImageSize bufferSize = FitsImageBufferSize(fitsImage);
+            ImageMeta bufferSize = FitsImageGetOutputSize(fitsImage);
 
-            byte[] img = new byte[bufferSize.nx*bufferSize.ny*bufferSize.nc];
-            FitsImageData(fitsImage, img);
-
-
-            //PixelFormat pf = PixelFormats.Rgb24;
-            //int width = 200;
-            //int height = 200;
-            //int rawStride = (width * pf.BitsPerPixel + 7) / 8;
-            //byte[] rawImage = new byte[rawStride * height];
-
-            //// Initialize the image with data.
-            //Random value = new Random();
-            //value.NextBytes(rawImage);
-
-            //// Create a BitmapSource.
-            //BitmapSource bitmapSource = BitmapSource.Create(width, height,
-            //    96, 96, pf, null,
-            //    rawImage, rawStride);
+            byte[] img = new byte[bufferSize.nx * bufferSize.ny * bufferSize.nc];
+            FitsImageGetPixData(fitsImage, img);
 
             BitmapSource bitmapSource;
             int rawStride = bufferSize.nx * bufferSize.nc;
@@ -113,7 +97,6 @@ namespace StandaloneViewer
             {
                 bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
-
             Image.Source = bitmapSource;
         }
     }

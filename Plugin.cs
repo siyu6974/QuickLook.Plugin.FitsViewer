@@ -41,12 +41,12 @@ namespace QuickLook.Plugin.FitsViewer
 
         public void Prepare(string path, ContextObject context)
         {
-            context.PreferredSize = new Size {Width = 600, Height = 400};
+            context.PreferredSize = new Size { Width = 600, Height = 400 };
         }
 
         public void View(string path, ContextObject context)
         {
-            var viewer = new Label {Content = "I am a Label. I do nothing at all."};
+            var viewer = new Label { Content = "I am a Label. I do nothing at all." };
 
             context.ViewerContent = viewer;
             context.Title = $"{Path.GetFileName(path)}";

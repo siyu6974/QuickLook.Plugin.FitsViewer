@@ -27,26 +27,28 @@
 using namespace CCfits;
 using std::string;
 
+
 __declspec(dllexport) typedef struct {
 	int nx;
 	int ny;
 	int nc;
-} ImageSize;
+	int depth;
+} ImageMeta;
 
 
 class FitsImage
 {
-	std::valarray<float> contents;
-	ImageSize size;
-	ImageSize finalSize;
+	ImageMeta _imgMeta;
+	ImageMeta _outImgMeta;
+	std::unique_ptr<FITS> pInfile;
 
-	public:
-		std::map<string, string> header;
+public:
+	std::map<string, string> header;
 
-		FitsImage(string path);
-		void getImagePix(unsigned char *pixData);
-		ImageSize getSize();
-		ImageSize getFinalSize();
+	FitsImage(string path);
+	void getImagePix(unsigned char *pixData);
+	ImageMeta getSize();
+	ImageMeta getFinalSize();
 };
 
 extern "C" {
@@ -59,22 +61,22 @@ extern "C" {
 		return new FitsImage(str);
 	}
 
-	__declspec(dllexport) ImageSize FitsImageSize(FitsImage *fits) {
+	__declspec(dllexport) ImageMeta FitsImageGetMeta(FitsImage *fits) {
 		return fits->getSize();
 	}
 
-	__declspec(dllexport) void FitsImageData(FitsImage *fits, unsigned char *data) {
+	__declspec(dllexport) void FitsImageGetPixData(FitsImage *fits, unsigned char *data) {
 		return fits->getImagePix(data);
 	}
 
-	__declspec(dllexport) const char* FitsImageHeader(FitsImage *fits) {
-		string result = "";
+	__declspec(dllexport) const char* FitsImageGetHeader(FitsImage *fits) {
+		//string result = "";
 
 		string output = "";
 
 		auto m = fits->header;
 		for (auto it = m.begin(); it != m.end(); it++) {
-			output += (it->first) + ":" + (it->second)+", ";
+			output += (it->first) + ":" + (it->second) + ", ";
 		}
 
 		//result = output.substr(0, output.size() - 2);
@@ -82,7 +84,8 @@ extern "C" {
 		return r;
 	}
 
-	__declspec(dllexport) ImageSize FitsImageBufferSize(FitsImage *fits) {		auto size = fits->getSize();
+	__declspec(dllexport) ImageMeta FitsImageGetOutputSize(FitsImage *fits) {
+		auto size = fits->getSize();
 		return fits->getFinalSize();
 	}
 }
