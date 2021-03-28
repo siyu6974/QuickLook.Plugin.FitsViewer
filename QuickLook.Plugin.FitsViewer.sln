@@ -4,12 +4,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Plugin.FitsViewer", "QuickLook.Plugin.FitsViewer.csproj", "{863ECAAC-18D9-4256-A27D-0F308089FB47}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D561191D-D121-480B-B1BF-E4FB2D5A6E15} = {D561191D-D121-480B-B1BF-E4FB2D5A6E15}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickLook.Common", "QuickLook.Common\QuickLook.Common.csproj", "{85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "viewer_core", "ViewerCore\cpp_dll.vcxproj", "{D561191D-D121-480B-B1BF-E4FB2D5A6E15}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneViewer", "StandaloneViewer\StandaloneViewer.csproj", "{3E1D3556-B00C-4307-A1D1-A458F462006C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95} = {85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,8 +35,8 @@ Global
 		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Debug|x86.Build.0 = Debug|x86
 		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|Any CPU.Build.0 = Release|Any CPU
-		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x64.ActiveCfg = Release|Any CPU
-		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x64.Build.0 = Release|Any CPU
+		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x64.ActiveCfg = Release|x64
+		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x64.Build.0 = Release|x64
 		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x86.ActiveCfg = Release|x86
 		{863ECAAC-18D9-4256-A27D-0F308089FB47}.Release|x86.Build.0 = Release|x86
 		{85FDD6BA-871D-46C8-BD64-F6BB0CB5EA95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -52,6 +58,7 @@ Global
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Debug|x86.ActiveCfg = Debug|Win32
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Debug|x86.Build.0 = Debug|Win32
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Release|Any CPU.Build.0 = Release|Win32
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Release|x64.ActiveCfg = Release|x64
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Release|x64.Build.0 = Release|x64
 		{D561191D-D121-480B-B1BF-E4FB2D5A6E15}.Release|x86.ActiveCfg = Release|Win32
@@ -66,8 +73,8 @@ Global
 		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x64.ActiveCfg = Release|Any CPU
 		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x64.Build.0 = Release|Any CPU
-		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x86.ActiveCfg = Release|Any CPU
-		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x86.Build.0 = Release|Any CPU
+		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x86.ActiveCfg = Release|x86
+		{3E1D3556-B00C-4307-A1D1-A458F462006C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

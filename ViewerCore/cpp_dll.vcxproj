@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D561191D-D121-480B-B1BF-E4FB2D5A6E15}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>cppdll</RootNamespace>
+    <RootNamespace>viewer_core</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ProjectName>viewer_core</ProjectName>
   </PropertyGroup>
@@ -100,7 +100,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>cfitsio.lib;CCfits.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CCfits.lib;cfitsio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\QuickLook.Plugin.FitsViewer\ViewerCore;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,8 +140,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>cfitsio.lib;CCfits.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CCfits.lib;cfitsio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\QuickLook.Plugin.FitsViewer\ViewerCore;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /D $(MSBuildProjectDirectory)\cfitsio.dll $(TargetPath)\..</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -182,12 +187,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="CCfits.lib">
-      <DeploymentContent>true</DeploymentContent>
-    </Library>
-    <Library Include="cfitsio.lib">
-      <DeploymentContent>true</DeploymentContent>
-    </Library>
+    <Library Include="CCfits.lib" />
+    <Library Include="cfitsio.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cfitsio.dll">
