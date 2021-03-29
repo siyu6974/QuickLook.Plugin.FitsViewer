@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -116,7 +117,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y /D "$(SolutionDir)\$(ConfigurationName)\viewer_core.dll" ".\"
-xcopy /y /D "$(SolutionDir)\$(ConfigurationName)\cfitsio.dll" ".\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y /D "$(SolutionDir)\x64\$(ConfigurationName)\viewer_core.dll" ".\"
+xcopy /y /D "$(SolutionDir)\ViewerCore\*.dll" ".\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
