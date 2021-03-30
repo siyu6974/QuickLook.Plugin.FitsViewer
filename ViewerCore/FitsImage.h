@@ -56,7 +56,7 @@ extern "C" {
 		string str(path);
 		std::cout << "********************" << std::endl;
 		std::cout << str << std::endl;
-		std::cout << str.length() << std::endl;
+		std::cout << "****" << std::endl;
 
 		return new FitsImage(str);
 	}

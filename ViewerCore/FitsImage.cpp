@@ -103,11 +103,14 @@ void process(std::valarray<T>& content, const ImageMeta& inmeta, const ImageMeta
 	StretchParams stretchParams;
 	computeParamsAllChannels(content, &stretchParams, outmeta);
 	stretchAllChannels(content, stretchParams, outmeta);
+	std::cout << "Process done" << std::endl;
 }
 
 
 template <typename T>
 void setBitmap(const std::valarray<T>& contents, const ImageMeta& inmeta, const ImageMeta& outmeta, unsigned char *pixData) {
+	std::cout << "Setting bitmap" << std::endl;
+
 	auto& size = inmeta;
 	auto& finalSize = outmeta;
 	if (size.nc == 1) {

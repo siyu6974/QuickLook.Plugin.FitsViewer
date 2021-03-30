@@ -70,10 +70,10 @@ namespace StandaloneViewer
         {
             InitializeComponent();
             //string path = "E:/temp/2020-01-02-1456_6-CapObj_0000.FIT";
-            string path = "E:/temp/3ch.fit";
+            //string path = "E:/temp/3ch.fit";
             //string path = "E:/temp/float.fit";
 
-            //string path = "E:/temp/小房牛 M31-009B.fit";
+            string path = "E:/temp/小房牛 M31-009B.fit";
 
             var fitsImage = FitsImageCreate(Marshal.StringToHGlobalAnsi(path));
             ImageMeta size = FitsImageGetMeta(fitsImage);
