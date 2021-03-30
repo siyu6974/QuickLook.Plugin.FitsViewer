@@ -24,9 +24,9 @@
 #define Stretch_h
 
 #include "FitsImage.h"
-//#include <ppl.h>
+#include <ppl.h>
 
-//using namespace concurrency;
+using namespace concurrency;
 
 
 struct StretchParams1Channel
@@ -182,9 +182,7 @@ template <typename T>
 void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
 	const ImageMeta& size) {
 	int nbPixPerPlane = size.nx * size.ny;
-	for (int ch = 0; ch < 3; ch++) {
-
-		//parallel_for(size_t(0), size_t(3), [&](size_t ch) {
+	parallel_for(size_t(0), size_t(size.nc), [&](size_t ch) {
 		StretchParams1Channel *channelParam;
 		switch (ch) {
 		case 1:
@@ -199,8 +197,7 @@ void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
 		}
 		computeParamsOneChannel(buffer, nbPixPerPlane*ch, channelParam,
 			size.ny, size.nx);
-		//});
-	}
+	});
 }
 
 
@@ -210,8 +207,7 @@ void stretchAllChannels(std::valarray<T>& buffer,
 	const ImageMeta& size) {
 	int nbPixPerPlane = size.nx * size.ny;
 
-	for (int ch = 0; ch < 3; ch++) {
-		//parallel_for(size_t(0), size_t(3), [&](size_t ch) {
+	parallel_for(size_t(0), size_t(size.nc), [&](size_t ch) {
 		StretchParams1Channel channelParam;
 		switch (ch) {
 		case 1:
@@ -226,8 +222,7 @@ void stretchAllChannels(std::valarray<T>& buffer,
 		}
 		stretchOneChannel(buffer, nbPixPerPlane*ch, channelParam,
 			size.ny, size.nx);
-	}
-	//});
+	});
 }
 
 #endif /* Stretch_h */

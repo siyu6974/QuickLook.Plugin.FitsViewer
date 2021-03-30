@@ -63,17 +63,21 @@ FitsImage::FitsImage(string path)
 
 	_imgMeta.nx = static_cast<int>(image.axis(0));
 	_imgMeta.ny = static_cast<int>(image.axis(1));
-	_imgMeta.nc = static_cast<int>(image.axes());
+	_imgMeta.nc = static_cast<int>(image.axes() == 3 ? 3:1);
+	_imgMeta.depth = static_cast<int>(image.bitpix());
 
 	string bayer = header["BAYERPAT"];
-	if (_imgMeta.nc == 2 && bayer.empty()) {
+	if (_imgMeta.nc == 1 && bayer.empty()) {
+		// mono
 		_outImgMeta = { _imgMeta.nx, _imgMeta.ny, 1, 8 };
 	}
 	else {
 		if (_imgMeta.nc == 3) {
+			// 3ch image
 			_outImgMeta = { _imgMeta.nx, _imgMeta.ny, 3, 8 };
 		}
-		else if (_imgMeta.nc == 2 && !bayer.empty()) {
+		else if (_imgMeta.nc == 1 && !bayer.empty()) {
+			// bayer image
 			_outImgMeta = { _imgMeta.nx / 2, _imgMeta.ny / 2, 3, 8 };
 		}
 	}
@@ -100,32 +104,29 @@ void process(std::valarray<T>& content, const ImageMeta& inmeta, const ImageMeta
 		// 3 ch color
 		downscale_color(content, inmeta.nx, inmeta.ny, df);
 	}
+
 	StretchParams stretchParams;
 	computeParamsAllChannels(content, &stretchParams, outmeta);
 	stretchAllChannels(content, stretchParams, outmeta);
-	std::cout << "Process done" << std::endl;
 }
 
 
 template <typename T>
-void setBitmap(const std::valarray<T>& contents, const ImageMeta& inmeta, const ImageMeta& outmeta, unsigned char *pixData) {
-	std::cout << "Setting bitmap" << std::endl;
-
-	auto& size = inmeta;
-	auto& finalSize = outmeta;
+void setBitmap(const std::valarray<T>& contents, const ImageMeta& outmeta, unsigned char *pixData) {
+	auto& size = outmeta;
 	if (size.nc == 1) {
 		for (int i = 0; i < size.ny*size.nx; i++) {
 			pixData[i] = contents[i];
 		}
 	}
 	else {
-		int nbPixPerPlane = finalSize.nx*finalSize.ny;
+		int nbPixPerPlane = size.nx*size.ny;
 
-		for (int i = 0; i < finalSize.ny; i++) {
-			for (int j = 0; j < finalSize.nx; j++) {
-				pixData[(i* finalSize.nx + j) * 3] = contents[i* finalSize.nx + j];
-				pixData[(i* finalSize.nx + j) * 3 + 1] = contents[i* finalSize.nx + j + nbPixPerPlane];
-				pixData[(i* finalSize.nx + j) * 3 + 2] = contents[i* finalSize.nx + j + nbPixPerPlane * 2];
+		for (int i = 0; i < size.ny; i++) {
+			for (int j = 0; j < size.nx; j++) {
+				pixData[(i* size.nx + j) * 3] = contents[i* size.nx + j];
+				pixData[(i* size.nx + j) * 3 + 1] = contents[i* size.nx + j + nbPixPerPlane];
+				pixData[(i* size.nx + j) * 3 + 2] = contents[i* size.nx + j + nbPixPerPlane * 2];
 			}
 		}
 	}
@@ -144,13 +145,13 @@ void FitsImage::getImagePix(unsigned char * pixData)
 		std::valarray<unsigned short> contents;
 		image.read(contents);
 		process(contents, _imgMeta, _outImgMeta, bayer, downscale_factor);
-		setBitmap(contents, _imgMeta, _outImgMeta, pixData);
+		setBitmap(contents, _outImgMeta, pixData);
 	}
 	else {
 		std::valarray<float> contents;
 		image.read(contents);
 		process(contents, _imgMeta, _outImgMeta, bayer, downscale_factor);
-		setBitmap(contents, _imgMeta, _outImgMeta, pixData);
+		setBitmap(contents, _outImgMeta, pixData);
 	}
 }
 
