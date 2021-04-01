@@ -48,8 +48,8 @@
   <ItemGroup>
     <Library Include="CCfits.lib" />
     <Library Include="cfitsio.lib" />
-    <Library Include="cfitsio32.lib" />
     <Library Include="CCfits32.lib" />
+    <Library Include="cfitsio32.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cfitsio.dll" />

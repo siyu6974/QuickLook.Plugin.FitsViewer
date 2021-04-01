@@ -50,41 +50,94 @@ namespace StandaloneViewer
     /// </summary>
     public partial class MainWindow : Window
     {
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        public static extern IntPtr FitsImageCreate(IntPtr path);
+        internal static class NativeMethods
+        {
+            private static readonly bool Is64 = Environment.Is64BitProcess;
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageMeta FitsImageGetMeta(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            public static extern IntPtr FitsImageCreate64(IntPtr path);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void FitsImageGetPixData(IntPtr ptr, byte[] data);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetMeta64(IntPtr ptr);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr FitsImageGetHeader(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageGetPixData64(IntPtr ptr, byte[] data);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageMeta FitsImageGetOutputSize(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
+            public static extern IntPtr FitsImageGetHeader64(IntPtr ptr);
+
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
+
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            public static extern IntPtr FitsImageCreate32(IntPtr path);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetMeta32(IntPtr ptr);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageGetPixData32(IntPtr ptr, byte[] data);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
+            public static extern IntPtr FitsImageGetHeader32(IntPtr ptr);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
+
+            public static IntPtr FitsImageCreate(string path)
+            {
+                return Is64 ? FitsImageCreate64(Marshal.StringToHGlobalAnsi(path)) : FitsImageCreate32(Marshal.StringToHGlobalAnsi(path));
+            }
+
+            public static ImageMeta FitsImageGetMeta(IntPtr ptr)
+            {
+                return Is64 ? FitsImageGetMeta64(ptr) : FitsImageGetMeta32(ptr);
+            }
+
+            public static void FitsImageGetPixData(IntPtr ptr, byte[] data)
+            {
+                if (Is64)
+                    FitsImageGetPixData64(ptr, data);
+                else
+                    FitsImageGetPixData32(ptr, data);
+            }
+
+            public static IntPtr FitsImageGetHeader(IntPtr ptr)
+            {
+                return Is64 ? FitsImageGetHeader64(ptr) : FitsImageGetHeader32(ptr);
+            }
+
+            public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
+            {
+                return Is64 ? FitsImageGetOutputSize64(ptr) : FitsImageGetOutputSize32(ptr);
+            }
+        }
+
 
 
         public MainWindow()
         {
             InitializeComponent();
-            string path = "E:/temp/2020-01-02-1456_6-CapObj_0000.FIT";
-            //string path = "E:/temp/3ch.fit";
+            Console.WriteLine("*********************");
+
+            Console.WriteLine(Environment.Is64BitProcess);
+            //string path = "E:/temp/2020-01-02-1456_6-CapObj_0000.FIT";
+            string path = "E:/temp/3ch.fit";
             //string path = "E:/temp/float.fit";
 
             //string path = "E:/temp/小房牛 M31-009B.fit";
 
-            var fitsImage = FitsImageCreate(Marshal.StringToHGlobalAnsi(path));
-            ImageMeta size = FitsImageGetMeta(fitsImage);
+            var fitsImage = NativeMethods.FitsImageCreate(path);
+            ImageMeta size = NativeMethods.FitsImageGetMeta(fitsImage);
 
             // NOT WORKING
             //string h = Marshal.PtrToStringAnsi(FitsImageHeader(fitsImage));
 
-            ImageMeta bufferSize = FitsImageGetOutputSize(fitsImage);
+            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(fitsImage);
 
             byte[] img = new byte[bufferSize.nx * bufferSize.ny * bufferSize.nc];
-            FitsImageGetPixData(fitsImage, img);
+            NativeMethods.FitsImageGetPixData(fitsImage, img);
 
             BitmapSource bitmapSource;
             int rawStride = bufferSize.nx * bufferSize.nc;
