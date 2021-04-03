@@ -54,10 +54,6 @@ public:
 extern "C" {
 	__declspec(dllexport) FitsImage *FitsImageCreate(const char * path) {
 		string str(path);
-		std::cout << "********************" << std::endl;
-		std::cout << str << std::endl;
-		std::cout << "****" << std::endl;
-
 		return new FitsImage(str);
 	}
 
@@ -69,19 +65,18 @@ extern "C" {
 		return fits->getImagePix(data);
 	}
 
-	__declspec(dllexport) const char* FitsImageGetHeader(FitsImage *fits) {
-		//string result = "";
-
+	__declspec(dllexport) int FitsImageGetHeader(FitsImage *fits, char *buffer) {
 		string output = "";
 
 		auto m = fits->header;
 		for (auto it = m.begin(); it != m.end(); it++) {
-			output += (it->first) + ":" + (it->second) + ", ";
+			output += (it->first) + ":" + (it->second) + "; ";
 		}
 
-		//result = output.substr(0, output.size() - 2);
-		const char *r = output.c_str();
-		return r;
+		if (buffer != nullptr)
+			strcpy_s(buffer, output.size() + 1, output.c_str());
+
+		return output.size();
 	}
 
 	__declspec(dllexport) ImageMeta FitsImageGetOutputSize(FitsImage *fits) {

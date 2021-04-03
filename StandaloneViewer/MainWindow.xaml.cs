@@ -64,7 +64,7 @@ namespace StandaloneViewer
             public static extern void FitsImageGetPixData64(IntPtr ptr, byte[] data);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
-            public static extern IntPtr FitsImageGetHeader64(IntPtr ptr);
+            public static extern int FitsImageGetHeader64(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
             public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
@@ -80,7 +80,7 @@ namespace StandaloneViewer
             public static extern void FitsImageGetPixData32(IntPtr ptr, byte[] data);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
-            public static extern IntPtr FitsImageGetHeader32(IntPtr ptr);
+            public static extern int FitsImageGetHeader32(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
             public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
@@ -103,9 +103,23 @@ namespace StandaloneViewer
                     FitsImageGetPixData32(ptr, data);
             }
 
-            public static IntPtr FitsImageGetHeader(IntPtr ptr)
+            public static Dictionary<string, string> FitsImageGetHeader(IntPtr ptr)
             {
-                return Is64 ? FitsImageGetHeader64(ptr) : FitsImageGetHeader32(ptr);
+                var len = Is64 ? FitsImageGetHeader64(ptr, null) : FitsImageGetHeader32(ptr, null);
+                if (len <= 0)
+                    return null;
+
+                var sb = new StringBuilder(len + 1);
+                var _ = Is64 ? FitsImageGetHeader64(ptr, sb) : FitsImageGetHeader32(ptr, sb);
+                string h_str =  sb.ToString();
+                var header = new Dictionary<string, string>();
+                var test = h_str.Split(';');
+                foreach (string entry in h_str.Split(new string[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var kv = entry.Split(':');
+                    header.Add(kv[0], kv[1]);
+                }
+                return header;
             }
 
             public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
@@ -131,8 +145,8 @@ namespace StandaloneViewer
             var fitsImage = NativeMethods.FitsImageCreate(path);
             ImageMeta size = NativeMethods.FitsImageGetMeta(fitsImage);
 
-            // NOT WORKING
-            //string h = Marshal.PtrToStringAnsi(FitsImageHeader(fitsImage));
+            var h = NativeMethods.FitsImageGetHeader(fitsImage);
+            Console.WriteLine(h);
 
             ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(fitsImage);
 
