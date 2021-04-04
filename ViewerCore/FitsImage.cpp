@@ -84,7 +84,6 @@ FitsImage::FitsImage(string path)
 }
 
 
-
 template <typename T>
 void process(std::valarray<T>& content, const ImageMeta& inmeta, const ImageMeta& outmeta, string bayer, int df) {
 	if (inmeta.nc == 1) {

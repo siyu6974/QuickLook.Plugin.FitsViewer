@@ -62,6 +62,9 @@ namespace QuickLook.Plugin.FitsViewer
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
             public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
 
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageDestroy", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageDestroy64(IntPtr ptr);
+
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
             public static extern IntPtr FitsImageCreate32(IntPtr path);
@@ -77,6 +80,9 @@ namespace QuickLook.Plugin.FitsViewer
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
             public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageDestroy", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageDestroy32(IntPtr ptr);
 
             public static IntPtr FitsImageCreate(string path)
             {
@@ -118,6 +124,17 @@ namespace QuickLook.Plugin.FitsViewer
             public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
             {
                 return Is64 ? FitsImageGetOutputSize64(ptr) : FitsImageGetOutputSize32(ptr);
+            }
+
+            public static void FitsImageDestroy(IntPtr ptr)
+            {
+                if (Is64)
+                {
+                    FitsImageDestroy64(ptr);
+                } else
+                {
+                    FitsImageDestroy32(ptr);
+                }
             }
         }
 
@@ -176,7 +193,9 @@ namespace QuickLook.Plugin.FitsViewer
 
         public void Cleanup()
         {
-            // TODO: CLEAN CPP
+            if (_fitsImagePtr != IntPtr.Zero)
+                NativeMethods.FitsImageDestroy(_fitsImagePtr);
+
             _ip?.Dispose();
             _ip = null;
         }

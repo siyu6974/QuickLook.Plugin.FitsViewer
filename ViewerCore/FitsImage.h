@@ -83,4 +83,8 @@ extern "C" {
 		auto size = fits->getSize();
 		return fits->getFinalSize();
 	}
+
+	__declspec(dllexport) void FitsImageDestroy(FitsImage *fits) {
+		delete fits;
+	}
 }
