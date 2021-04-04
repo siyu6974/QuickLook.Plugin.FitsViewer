@@ -78,7 +78,7 @@
         <Button x:Name="buttonMeta" Width="24" Height="24" Style="{StaticResource CaptionButtonStyle}"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Visibility="{Binding ElementName=imagePanel, Path=MetaIconVisibility}"
-                Margin="0,8,40,0" Content="&#xE946;" />
+                Margin="0,10,10,0" Content="&#xE946;" />
 
         <TextBlock x:Name="textMeta" IsHitTestVisible="False" HorizontalAlignment="Right"
                    VerticalAlignment="Top" FontSize="11"

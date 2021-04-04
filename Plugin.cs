@@ -26,6 +26,9 @@ using QuickLook.Common.Plugin;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using QuickLook.Plugin.ImageViewer;
+using System.Text;
+using System.Collections.Generic;
 
 namespace QuickLook.Plugin.FitsViewer
 {
@@ -40,24 +43,88 @@ namespace QuickLook.Plugin.FitsViewer
 
     public class Plugin : IViewer
     {
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        public static extern IntPtr FitsImageCreate(IntPtr path);
+        internal static class NativeMethods
+        {
+            private static readonly bool Is64 = Environment.Is64BitProcess;
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageMeta FitsImageGetMeta(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            public static extern IntPtr FitsImageCreate64(IntPtr path);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void FitsImageGetPixData(IntPtr ptr, byte[] data);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetMeta64(IntPtr ptr);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr FitsImageGetHeader(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageGetPixData64(IntPtr ptr, byte[] data);
 
-        [DllImport(@"viewer_core.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern ImageMeta FitsImageGetOutputSize(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
+            public static extern int FitsImageGetHeader64(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
+
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
+
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+            public static extern IntPtr FitsImageCreate32(IntPtr path);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetMeta32(IntPtr ptr);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
+            public static extern void FitsImageGetPixData32(IntPtr ptr, byte[] data);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
+            public static extern int FitsImageGetHeader32(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
+
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
+
+            public static IntPtr FitsImageCreate(string path)
+            {
+                return Is64 ? FitsImageCreate64(Marshal.StringToHGlobalAnsi(path)) : FitsImageCreate32(Marshal.StringToHGlobalAnsi(path));
+            }
+
+            public static ImageMeta FitsImageGetMeta(IntPtr ptr)
+            {
+                return Is64 ? FitsImageGetMeta64(ptr) : FitsImageGetMeta32(ptr);
+            }
+
+            public static void FitsImageGetPixData(IntPtr ptr, byte[] data)
+            {
+                if (Is64)
+                    FitsImageGetPixData64(ptr, data);
+                else
+                    FitsImageGetPixData32(ptr, data);
+            }
+
+            public static Dictionary<string, string> FitsImageGetHeader(IntPtr ptr)
+            {
+                var len = Is64 ? FitsImageGetHeader64(ptr, null) : FitsImageGetHeader32(ptr, null);
+                if (len <= 0)
+                    return null;
+
+                var sb = new StringBuilder(len + 1);
+                var _ = Is64 ? FitsImageGetHeader64(ptr, sb) : FitsImageGetHeader32(ptr, sb);
+                string h_str = sb.ToString();
+                var header = new Dictionary<string, string>();
+                var test = h_str.Split(';');
+                foreach (string entry in h_str.Split(new string[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var kv = entry.Split(':');
+                    header.Add(kv[0], kv[1]);
+                }
+                return header;
+            }
+
+            public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
+            {
+                return Is64 ? FitsImageGetOutputSize64(ptr) : FitsImageGetOutputSize32(ptr);
+            }
+        }
 
 
         public int Priority => 0;
-        private ImagePanel _ip; 
+        private ImagePanel _ip;
+        private IntPtr _fitsImagePtr;
 
         public void Init()
         {
@@ -71,22 +138,21 @@ namespace QuickLook.Plugin.FitsViewer
 
         public void Prepare(string path, ContextObject context)
         {
-            context.PreferredSize = new Size { Width = 800, Height = 600 };
+            _fitsImagePtr = NativeMethods.FitsImageCreate(path);
+            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(_fitsImagePtr);
+
+            var size = new Size(bufferSize.nx, bufferSize.ny);
+            context.SetPreferredSizeFit(size, 0.8);
         }
 
         public void View(string path, ContextObject context)
         {
-            _ip = new ImagePanel(context);
+            var header = NativeMethods.FitsImageGetHeader(_fitsImagePtr);
 
-            context.ViewerContent = _ip;
-            context.Title = $"{Path.GetFileName(path)}";
-
-            var fitsImage = FitsImageCreate(Marshal.StringToHGlobalAnsi(path));
-            ImageMeta size = FitsImageGetMeta(fitsImage);
-            ImageMeta bufferSize = FitsImageGetOutputSize(fitsImage);
+            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(_fitsImagePtr);
 
             byte[] img = new byte[bufferSize.nx * bufferSize.ny * bufferSize.nc];
-            FitsImageGetPixData(fitsImage, img);
+            NativeMethods.FitsImageGetPixData(_fitsImagePtr, img);
 
             BitmapSource bitmapSource;
             int rawStride = bufferSize.nx * bufferSize.nc;
@@ -98,13 +164,21 @@ namespace QuickLook.Plugin.FitsViewer
             {
                 bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
-            //_ip.Image.Source = bitmapSource;
+
+            _ip = new ImagePanel(context, header);
+
+            context.ViewerContent = _ip;
+            context.Title = $"{Path.GetFileName(path)}";
+            _ip.Source = bitmapSource;
 
             context.IsBusy = false;
         }
 
         public void Cleanup()
         {
+            // TODO: CLEAN CPP
+            _ip?.Dispose();
+            _ip = null;
         }
     }
 }

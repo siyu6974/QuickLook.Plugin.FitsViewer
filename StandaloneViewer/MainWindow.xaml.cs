@@ -145,8 +145,7 @@ namespace StandaloneViewer
             //string path = "E:/temp/小房牛 M31-009B.fit";
 
             var fitsImage = NativeMethods.FitsImageCreate(path);
-            ImageMeta size = NativeMethods.FitsImageGetMeta(fitsImage);
-
+        
             var header = NativeMethods.FitsImageGetHeader(fitsImage);
 
             ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(fitsImage);
@@ -164,12 +163,14 @@ namespace StandaloneViewer
             {
                 bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
-            //Image.Source = bitmapSource;
 
             var co = new ContextObject();
             _ip = new ImagePanel(co, header);
-            
             _ip.Source = bitmapSource;
+
+            var size = new Size(bufferSize.nx, bufferSize.ny);
+            co.SetPreferredSizeFit(size, 0.8);
+
             _tabUserPage = new TabItem { Content = _ip };
             MainTab.Items.Add(_tabUserPage);
             MainTab.Items.Refresh();
