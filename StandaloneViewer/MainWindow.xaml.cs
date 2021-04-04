@@ -33,7 +33,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Runtime.InteropServices;
-
+using QuickLook.Plugin.ImageViewer;
+using QuickLook.Common.Plugin;
 
 namespace StandaloneViewer
 {
@@ -128,6 +129,7 @@ namespace StandaloneViewer
             }
         }
 
+        private ImagePanel _ip;
 
 
         public MainWindow()
@@ -145,8 +147,7 @@ namespace StandaloneViewer
             var fitsImage = NativeMethods.FitsImageCreate(path);
             ImageMeta size = NativeMethods.FitsImageGetMeta(fitsImage);
 
-            var h = NativeMethods.FitsImageGetHeader(fitsImage);
-            Console.WriteLine(h);
+            var header = NativeMethods.FitsImageGetHeader(fitsImage);
 
             ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(fitsImage);
 
@@ -163,7 +164,18 @@ namespace StandaloneViewer
             {
                 bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
-            Image.Source = bitmapSource;
+            //Image.Source = bitmapSource;
+
+            var co = new ContextObject();
+            _ip = new ImagePanel(co, header);
+            
+            _ip.Source = bitmapSource;
+            _tabUserPage = new TabItem { Content = _ip };
+            MainTab.Items.Add(_tabUserPage);
+            MainTab.Items.Refresh();
+
         }
+        TabItem _tabUserPage;
+
     }
 }

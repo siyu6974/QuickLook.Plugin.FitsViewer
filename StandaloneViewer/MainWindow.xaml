@@ -7,7 +7,13 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="Image"></Image>
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+        </Grid.RowDefinitions>-->
+        <!--<Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="Image"></Image>-->
+        <TabControl x:Name="MainTab" Background="Beige"  Grid.Row="1">
 
+        </TabControl>
     </Grid>
 </Window>

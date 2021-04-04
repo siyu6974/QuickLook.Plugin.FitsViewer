@@ -6,8 +6,24 @@
              xmlns:local="clr-namespace:QuickLook.Plugin.FitsViewer"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- only for design -->
+                <ResourceDictionary Source="/QuickLook.Common;component/Styles/MainWindowStyles.xaml" />
+                <ResourceDictionary Source="/QuickLook.Common;component/Styles/MainWindowStyles.Dark.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
     <Grid>
-        <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="Image"></Image>
-
+        <Grid>
+            <ScrollViewer x:Name="viewPanel" BorderThickness="0" HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto" Focusable="False" IsManipulationEnabled="True">
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor" x:Name="viewPanelImage" Stretch="None" />
+            </ScrollViewer>
+            <Button x:Name="buttonMeta" Width="24" Height="24" Style="{StaticResource CaptionButtonStyle}"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Margin="0,8,40,0" Content="&#xE946;" />
+        </Grid>
     </Grid>
 </UserControl>

@@ -98,7 +98,7 @@ namespace QuickLook.Plugin.FitsViewer
             {
                 bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
-            _ip.Image.Source = bitmapSource;
+            //_ip.Image.Source = bitmapSource;
 
             context.IsBusy = false;
         }
