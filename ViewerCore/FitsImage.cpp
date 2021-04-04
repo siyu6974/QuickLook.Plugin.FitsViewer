@@ -61,58 +61,58 @@ FitsImage::FitsImage(string path)
 	PHDU& image = pInfile->pHDU();
 	header = readImageHeader(image);
 
-	_imgMeta.nx = static_cast<int>(image.axis(0));
-	_imgMeta.ny = static_cast<int>(image.axis(1));
-	_imgMeta.nc = static_cast<int>(image.axes() == 3 ? 3:1);
-	_imgMeta.depth = static_cast<int>(image.bitpix());
+	_imgDim.nx = static_cast<int>(image.axis(0));
+	_imgDim.ny = static_cast<int>(image.axis(1));
+	_imgDim.nc = static_cast<int>(image.axes() == 3 ? 3 : 1);
+	_imgDim.depth = static_cast<int>(image.bitpix());
 
 	string bayer = header["BAYERPAT"];
-	if (_imgMeta.nc == 1 && bayer.empty()) {
+	if (_imgDim.nc == 1 && bayer.empty()) {
 		// mono
-		_outImgMeta = { _imgMeta.nx, _imgMeta.ny, 1, 8 };
+		_outImgMeta = { _imgDim.nx, _imgDim.ny, 1, 8 };
 	}
 	else {
-		if (_imgMeta.nc == 3) {
+		if (_imgDim.nc == 3) {
 			// 3ch image
-			_outImgMeta = { _imgMeta.nx, _imgMeta.ny, 3, 8 };
+			_outImgMeta = { _imgDim.nx, _imgDim.ny, 3, 8 };
 		}
-		else if (_imgMeta.nc == 1 && !bayer.empty()) {
+		else if (_imgDim.nc == 1 && !bayer.empty()) {
 			// bayer image
-			_outImgMeta = { _imgMeta.nx / 2, _imgMeta.ny / 2, 3, 8 };
+			_outImgMeta = { _imgDim.nx / 2, _imgDim.ny / 2, 3, 8 };
 		}
 	}
 }
 
 
 template <typename T>
-void process(std::valarray<T>& content, const ImageMeta& inmeta, const ImageMeta& outmeta, string bayer, int df) {
-	if (inmeta.nc == 1) {
+void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& outDim, string bayer, int df) {
+	if (inDim.nc == 1) {
 		if (df > 1 && bayer.empty()) {
 			// mono
-			downscale_mono(content, inmeta.nx, inmeta.ny, df);
+			downscale_mono(content, inDim.nx, inDim.ny, df);
 		}
 		else if (!bayer.empty()) {
 			// bayered 
-			int nbFinalPix = inmeta.nx * inmeta.ny * 3 / 4;
+			int nbFinalPix = inDim.nx * inDim.ny * 3 / 4;
 			std::valarray<T> debayered = std::valarray<T>(nbFinalPix);
-			super_pixel(content, debayered, inmeta.nx, inmeta.ny, bayer, df);
+			super_pixel(content, debayered, inDim.nx, inDim.ny, bayer, df);
 			content = debayered;
 		}
 	}
-	else if (df > 1 && inmeta.nc == 3) {
+	else if (df > 1 && inDim.nc == 3) {
 		// 3 ch color
-		downscale_color(content, inmeta.nx, inmeta.ny, df);
+		downscale_color(content, inDim.nx, inDim.ny, df);
 	}
 
 	StretchParams stretchParams;
-	computeParamsAllChannels(content, &stretchParams, outmeta);
-	stretchAllChannels(content, stretchParams, outmeta);
+	computeParamsAllChannels(content, &stretchParams, outDim);
+	stretchAllChannels(content, stretchParams, outDim);
 }
 
 
 template <typename T>
-void setBitmap(const std::valarray<T>& contents, const ImageMeta& outmeta, unsigned char *pixData) {
-	auto& size = outmeta;
+void setBitmap(const std::valarray<T>& contents, const ImageDim& outDim, unsigned char *pixData) {
+	auto& size = outDim;
 	if (size.nc == 1) {
 		for (int i = 0; i < size.ny*size.nx; i++) {
 			pixData[i] = contents[i];
@@ -143,25 +143,25 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	if (bitpix == Ishort) {
 		std::valarray<unsigned short> contents;
 		image.read(contents);
-		process(contents, _imgMeta, _outImgMeta, bayer, downscale_factor);
+		process(contents, _imgDim, _outImgMeta, bayer, downscale_factor);
 		setBitmap(contents, _outImgMeta, pixData);
 	}
 	else {
 		std::valarray<float> contents;
 		image.read(contents);
-		process(contents, _imgMeta, _outImgMeta, bayer, downscale_factor);
+		process(contents, _imgDim, _outImgMeta, bayer, downscale_factor);
 		setBitmap(contents, _outImgMeta, pixData);
 	}
 }
 
 
-ImageMeta FitsImage::getSize()
+ImageDim FitsImage::getDim()
 {
-	return _imgMeta;
+	return _imgDim;
 }
 
 
-ImageMeta FitsImage::getFinalSize()
+ImageDim FitsImage::getFinalDim()
 {
 	return _outImgMeta;
 }

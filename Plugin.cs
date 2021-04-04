@@ -32,7 +32,7 @@ using System.Collections.Generic;
 
 namespace QuickLook.Plugin.FitsViewer
 {
-    public struct ImageMeta
+    public struct ImageDim
     {
         public int nx;
         public int ny;
@@ -51,7 +51,7 @@ namespace QuickLook.Plugin.FitsViewer
             public static extern IntPtr FitsImageCreate64(IntPtr path);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetMeta64(IntPtr ptr);
+            public static extern ImageDim FitsImageGetMeta64(IntPtr ptr);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageGetPixData64(IntPtr ptr, byte[] data);
@@ -59,8 +59,8 @@ namespace QuickLook.Plugin.FitsViewer
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
             public static extern int FitsImageGetHeader64(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
-            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputDim", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageDim FitsImageGetOutputDim64(IntPtr ptr);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageDestroy", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageDestroy64(IntPtr ptr);
@@ -70,7 +70,7 @@ namespace QuickLook.Plugin.FitsViewer
             public static extern IntPtr FitsImageCreate32(IntPtr path);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetMeta32(IntPtr ptr);
+            public static extern ImageDim FitsImageGetMeta32(IntPtr ptr);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageGetPixData32(IntPtr ptr, byte[] data);
@@ -78,8 +78,8 @@ namespace QuickLook.Plugin.FitsViewer
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
             public static extern int FitsImageGetHeader32(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
-            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputDim", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageDim FitsImageGetOutputDim32(IntPtr ptr);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageDestroy", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageDestroy32(IntPtr ptr);
@@ -89,7 +89,7 @@ namespace QuickLook.Plugin.FitsViewer
                 return Is64 ? FitsImageCreate64(Marshal.StringToHGlobalAnsi(path)) : FitsImageCreate32(Marshal.StringToHGlobalAnsi(path));
             }
 
-            public static ImageMeta FitsImageGetMeta(IntPtr ptr)
+            public static ImageDim FitsImageGetMeta(IntPtr ptr)
             {
                 return Is64 ? FitsImageGetMeta64(ptr) : FitsImageGetMeta32(ptr);
             }
@@ -121,9 +121,9 @@ namespace QuickLook.Plugin.FitsViewer
                 return header;
             }
 
-            public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
+            public static ImageDim FitsImageGetOutputDim(IntPtr ptr)
             {
-                return Is64 ? FitsImageGetOutputSize64(ptr) : FitsImageGetOutputSize32(ptr);
+                return Is64 ? FitsImageGetOutputDim64(ptr) : FitsImageGetOutputDim32(ptr);
             }
 
             public static void FitsImageDestroy(IntPtr ptr)
@@ -131,7 +131,8 @@ namespace QuickLook.Plugin.FitsViewer
                 if (Is64)
                 {
                     FitsImageDestroy64(ptr);
-                } else
+                }
+                else
                 {
                     FitsImageDestroy32(ptr);
                 }
@@ -156,9 +157,9 @@ namespace QuickLook.Plugin.FitsViewer
         public void Prepare(string path, ContextObject context)
         {
             _fitsImagePtr = NativeMethods.FitsImageCreate(path);
-            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(_fitsImagePtr);
+            ImageDim outputDim = NativeMethods.FitsImageGetOutputDim(_fitsImagePtr);
 
-            var size = new Size(bufferSize.nx, bufferSize.ny);
+            var size = new Size(outputDim.nx, outputDim.ny);
             context.SetPreferredSizeFit(size, 0.8);
         }
 
@@ -166,20 +167,20 @@ namespace QuickLook.Plugin.FitsViewer
         {
             var header = NativeMethods.FitsImageGetHeader(_fitsImagePtr);
 
-            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(_fitsImagePtr);
+            ImageDim outputDim = NativeMethods.FitsImageGetOutputDim(_fitsImagePtr);
 
-            byte[] img = new byte[bufferSize.nx * bufferSize.ny * bufferSize.nc];
+            byte[] img = new byte[outputDim.nx * outputDim.ny * outputDim.nc];
             NativeMethods.FitsImageGetPixData(_fitsImagePtr, img);
 
             BitmapSource bitmapSource;
-            int rawStride = bufferSize.nx * bufferSize.nc;
-            if (bufferSize.nc == 3)
+            int rawStride = outputDim.nx * outputDim.nc;
+            if (outputDim.nc == 3)
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
             }
             else
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
             }
 
             _ip = new ImagePanel(context, header);

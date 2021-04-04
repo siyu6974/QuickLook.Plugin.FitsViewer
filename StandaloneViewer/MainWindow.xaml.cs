@@ -38,7 +38,7 @@ using QuickLook.Common.Plugin;
 
 namespace StandaloneViewer
 {
-    public struct ImageMeta
+    public struct ImageDim
     {
         public int nx;
         public int ny;
@@ -59,7 +59,7 @@ namespace StandaloneViewer
             public static extern IntPtr FitsImageCreate64(IntPtr path);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetMeta64(IntPtr ptr);
+            public static extern ImageDim FitsImageGetMeta64(IntPtr ptr);
 
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageGetPixData64(IntPtr ptr, byte[] data);
@@ -67,15 +67,15 @@ namespace StandaloneViewer
             [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
             public static extern int FitsImageGetHeader64(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
-            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetOutputSize64(IntPtr ptr);
+            [DllImport(@"viewer_core.dll", EntryPoint = "FitsImageGetOutputDim", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageDim FitsImageGetOutputDim64(IntPtr ptr);
 
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageCreate", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
             public static extern IntPtr FitsImageCreate32(IntPtr path);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetMeta", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetMeta32(IntPtr ptr);
+            public static extern ImageDim FitsImageGetMeta32(IntPtr ptr);
 
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetPixData", CallingConvention = CallingConvention.Cdecl)]
             public static extern void FitsImageGetPixData32(IntPtr ptr, byte[] data);
@@ -83,15 +83,15 @@ namespace StandaloneViewer
             [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetHeader", CallingConvention = CallingConvention.Cdecl)]
             public static extern int FitsImageGetHeader32(IntPtr ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder sb);
 
-            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputSize", CallingConvention = CallingConvention.Cdecl)]
-            public static extern ImageMeta FitsImageGetOutputSize32(IntPtr ptr);
+            [DllImport(@"viewer_core32.dll", EntryPoint = "FitsImageGetOutputDim", CallingConvention = CallingConvention.Cdecl)]
+            public static extern ImageDim FitsImageGetOutputDim32(IntPtr ptr);
 
             public static IntPtr FitsImageCreate(string path)
             {
                 return Is64 ? FitsImageCreate64(Marshal.StringToHGlobalAnsi(path)) : FitsImageCreate32(Marshal.StringToHGlobalAnsi(path));
             }
 
-            public static ImageMeta FitsImageGetMeta(IntPtr ptr)
+            public static ImageDim FitsImageGetMeta(IntPtr ptr)
             {
                 return Is64 ? FitsImageGetMeta64(ptr) : FitsImageGetMeta32(ptr);
             }
@@ -123,9 +123,9 @@ namespace StandaloneViewer
                 return header;
             }
 
-            public static ImageMeta FitsImageGetOutputSize(IntPtr ptr)
+            public static ImageDim FitsImageGetOutputDim(IntPtr ptr)
             {
-                return Is64 ? FitsImageGetOutputSize64(ptr) : FitsImageGetOutputSize32(ptr);
+                return Is64 ? FitsImageGetOutputDim64(ptr) : FitsImageGetOutputDim32(ptr);
             }
         }
 
@@ -148,7 +148,7 @@ namespace StandaloneViewer
         
             var header = NativeMethods.FitsImageGetHeader(fitsImage);
 
-            ImageMeta bufferSize = NativeMethods.FitsImageGetOutputSize(fitsImage);
+            ImageDim bufferSize = NativeMethods.FitsImageGetOutputDim(fitsImage);
 
             byte[] img = new byte[bufferSize.nx * bufferSize.ny * bufferSize.nc];
             NativeMethods.FitsImageGetPixData(fitsImage, img);

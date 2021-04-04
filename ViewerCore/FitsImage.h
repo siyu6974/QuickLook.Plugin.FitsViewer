@@ -33,13 +33,13 @@ __declspec(dllexport) typedef struct {
 	int ny;
 	int nc;
 	int depth;
-} ImageMeta;
+} ImageDim;
 
 
 class FitsImage
 {
-	ImageMeta _imgMeta;
-	ImageMeta _outImgMeta;
+	ImageDim _imgDim;
+	ImageDim _outImgMeta;
 	std::unique_ptr<FITS> pInfile;
 
 public:
@@ -47,8 +47,8 @@ public:
 
 	FitsImage(string path);
 	void getImagePix(unsigned char *pixData);
-	ImageMeta getSize();
-	ImageMeta getFinalSize();
+	ImageDim getDim();
+	ImageDim getFinalDim();
 };
 
 extern "C" {
@@ -57,8 +57,8 @@ extern "C" {
 		return new FitsImage(str);
 	}
 
-	__declspec(dllexport) ImageMeta FitsImageGetMeta(FitsImage *fits) {
-		return fits->getSize();
+	__declspec(dllexport) ImageDim FitsImageGetDim(FitsImage *fits) {
+		return fits->getDim();
 	}
 
 	__declspec(dllexport) void FitsImageGetPixData(FitsImage *fits, unsigned char *data) {
@@ -79,9 +79,9 @@ extern "C" {
 		return output.size();
 	}
 
-	__declspec(dllexport) ImageMeta FitsImageGetOutputSize(FitsImage *fits) {
-		auto size = fits->getSize();
-		return fits->getFinalSize();
+	__declspec(dllexport) ImageDim FitsImageGetOutputDim(FitsImage *fits) {
+		auto size = fits->getDim();
+		return fits->getFinalDim();
 	}
 
 	__declspec(dllexport) void FitsImageDestroy(FitsImage *fits) {

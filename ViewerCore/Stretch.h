@@ -180,7 +180,7 @@ void stretchOneChannel(std::valarray<T>& buffer, int offset,
 
 template <typename T>
 void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
-	const ImageMeta& size) {
+	const ImageDim& size) {
 	int nbPixPerPlane = size.nx * size.ny;
 	parallel_for(size_t(0), size_t(size.nc), [&](size_t ch) {
 		StretchParams1Channel *channelParam;
@@ -204,7 +204,7 @@ void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
 template <typename T>
 void stretchAllChannels(std::valarray<T>& buffer,
 	const StretchParams& params,
-	const ImageMeta& size) {
+	const ImageDim& size) {
 	int nbPixPerPlane = size.nx * size.ny;
 
 	parallel_for(size_t(0), size_t(size.nc), [&](size_t ch) {
