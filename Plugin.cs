@@ -151,7 +151,7 @@ namespace QuickLook.Plugin.FitsViewer
         public bool CanHandle(string path)
         {
             return !Directory.Exists(path) && (path.ToLower().EndsWith(".fits") ||
-                path.ToLower().EndsWith(".fit"));
+                path.ToLower().EndsWith(".fit") || path.ToLower().EndsWith(".fts"));
         }
 
         public void Prepare(string path, ContextObject context)
