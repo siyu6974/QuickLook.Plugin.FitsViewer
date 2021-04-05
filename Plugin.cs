@@ -154,6 +154,7 @@ namespace QuickLook.Plugin.FitsViewer
                 path.ToLower().EndsWith(".fit") || path.ToLower().EndsWith(".fts"));
         }
 
+
         public void Prepare(string path, ContextObject context)
         {
             _fitsImagePtr = NativeMethods.FitsImageCreate(path);
@@ -162,6 +163,7 @@ namespace QuickLook.Plugin.FitsViewer
             var size = new Size(outputDim.nx, outputDim.ny);
             context.SetPreferredSizeFit(size, 0.8);
         }
+
 
         public void View(string path, ContextObject context)
         {
@@ -176,11 +178,11 @@ namespace QuickLook.Plugin.FitsViewer
             int rawStride = outputDim.nx * outputDim.nc;
             if (outputDim.nc == 3)
             {
-                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 96, 96, PixelFormats.Rgb24, null, img, rawStride);
             }
             else
             {
-                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(outputDim.nx, outputDim.ny, 96, 96, PixelFormats.Gray8, null, img, rawStride);
             }
 
             _ip = new ImagePanel(context, header);

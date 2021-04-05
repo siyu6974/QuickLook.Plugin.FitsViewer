@@ -1,4 +1,4 @@
-﻿/*    
+/*    
 	QuickFits - FITS file preview plugin for QL-win
     Copyright (C) 2021 Siyu Zhang
 
@@ -157,19 +157,19 @@ namespace StandaloneViewer
             int rawStride = bufferSize.nx * bufferSize.nc;
             if (bufferSize.nc == 3)
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Rgb24, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 96, 96, PixelFormats.Rgb24, null, img, rawStride);
             }
             else
             {
-                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 300, 300, PixelFormats.Gray8, null, img, rawStride);
+                bitmapSource = BitmapSource.Create(bufferSize.nx, bufferSize.ny, 96, 96, PixelFormats.Gray8, null, img, rawStride);
             }
 
             var co = new ContextObject();
             _ip = new ImagePanel(co, header);
-            _ip.Source = bitmapSource;
 
             var size = new Size(bufferSize.nx, bufferSize.ny);
             co.SetPreferredSizeFit(size, 0.8);
+            _ip.Source = bitmapSource;
 
             _tabUserPage = new TabItem { Content = _ip };
             MainTab.Items.Add(_tabUserPage);
