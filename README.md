@@ -5,12 +5,14 @@ FITS image Plugin for QL-win, featuring
 - auto stretch, producing similar image as PI
 - FITS header available via the little info icon on the top-right corner
 
+
 ## Typical usecases
 * in the field: experiment exposure/gain combination 
 * post: primary sub rejection for things like satelite trails and bad tracking
 
 
 ## Install
+A short video demo & instruction is available [here](https://youtu.be/VSkJGwJ0xdE)
 1. Download and run QuickLook for windows [here](https://github.com/QL-Win/QuickLook)
 2. Grab the latest [release file](https://github.com/siyu6974/QuickLook.Plugin.FitsViewer/releases/)
 3. Find the file you just downloaded in the File Explorer, for example "QuickLook.Plugin.FitsViewer.qlplugin"
