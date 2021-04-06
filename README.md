@@ -11,10 +11,10 @@ FITS image Plugin for QL-win, featuring
 
 
 ## Install
-1. Download and run QuickLook for windows here https://github.com/QL-Win/QuickLook
-2. Grab the latest release file in Github
-3. Find the file you just got in the File Explorer, for example "QuickLook.Plugin.FitsViewer.qlplugin"
-4. Select it and then hit the space key, this installs the plugin
+1. Download and run QuickLook for windows [here](https://github.com/QL-Win/QuickLook)
+2. Grab the latest [release file](https://github.com/siyu6974/QuickLook.Plugin.FitsViewer/releases/)
+3. Find the file you just downloaded in the File Explorer, for example "QuickLook.Plugin.FitsViewer.qlplugin"
+4. Select it and then hit the space key, click "click here to install this plugin"
 5. Restart QuickLook
 6. Enjoy, try hit the space key on a FITS file
 
