@@ -1,5 +1,3 @@
-![Demo](demo.gif)
-
 # QuickLook.Plugin.FitsViewer
 
 FITS image Plugin for QL-win, featuring 
@@ -8,7 +6,7 @@ FITS image Plugin for QL-win, featuring
 - FITS header available via the little info icon on the top-right corner
 
 ## Typical usecases
-* in the field: finding exposure/gain combination 
+* in the field: experiment exposure/gain combination 
 * post: primary sub rejection for things like satelite trails and bad tracking
 
 
@@ -33,3 +31,6 @@ To build a plugin that works with both x86 and x64 arch, be sure to use `batch b
 ## License
 
 LGPL License.
+
+## Demo
+![Demo](demo.gif)
