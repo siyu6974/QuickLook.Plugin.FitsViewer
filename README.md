@@ -12,7 +12,7 @@ FITS image Plugin for QL-win, featuring
 
 
 ## Install
-A short video demo & instruction is available [here](https://youtu.be/VSkJGwJ0xdE)
+A short video demo & instruction is available [here](https://youtu.be/oMexMV3Yx3E)
 1. Download and run QuickLook for windows [here](https://github.com/QL-Win/QuickLook)
 2. Grab the latest [release file](https://github.com/siyu6974/QuickLook.Plugin.FitsViewer/releases/)
 3. Find the file you just downloaded in the File Explorer, for example "QuickLook.Plugin.FitsViewer.qlplugin"
