@@ -34,11 +34,11 @@ To build a plugin that works with both x86 and x64 arch, be sure to use `batch b
 
 The source of this project is released under LGPL License.
 
-It uses third party libraries released under their repective licenses, namely
+It uses third party libraries and code released under their repective licenses, namely
 
 - CCfits: [link](https://github.com/esrf-bliss/CCfits/blob/master/License.txt)
 - cfitsio: [link](https://github.com/healpy/cfitsio/blob/master/License.txt)
-
+- QuickLook: GPL3.0
 
 ## Demo
 ![Demo](demo.gif)
