@@ -141,7 +141,6 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	auto bitpix = image.bitpix();
 
 	if (bitpix == Ishort) {
-		std::valarray<unsigned short> contents;
 		if (header["SWCREATE"].find("N.I.N.A") != std::string::npos) {
 			auto fptr = image.fitsPointer();
 			long nullval = 0;
@@ -150,17 +149,21 @@ void FitsImage::getImagePix(unsigned char * pixData)
 			int status, anynull;
 
 			fits_read_img(fptr, TSHORT, 1, nbuffer, &nullval, buffer, &anynull, &status);
-			contents = std::valarray<unsigned short>(nbuffer);
+			auto contents = std::valarray<unsigned short>(nbuffer);
 			for (int i = 0; i < nbuffer; i++) {
 				contents[i] = buffer[i];
 			}
 			delete[] buffer;
+
+			process(contents, _imgDim, _outDim, bayer, downscale_factor);
+			setBitmap(contents, _outDim, pixData);
 		}
 		else {
+			std::valarray<unsigned short> contents;
 			image.read(contents);
+			process(contents, _imgDim, _outDim, bayer, downscale_factor);
+			setBitmap(contents, _outDim, pixData);
 		}
-		process(contents, _imgDim, _outDim, bayer, downscale_factor);
-		setBitmap(contents, _outDim, pixData);
 	}
 	else {
 		std::valarray<float> contents;
