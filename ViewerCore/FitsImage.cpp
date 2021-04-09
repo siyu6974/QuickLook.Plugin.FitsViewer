@@ -69,16 +69,16 @@ FitsImage::FitsImage(string path)
 	string bayer = header["BAYERPAT"];
 	if (_imgDim.nc == 1 && bayer.empty()) {
 		// mono
-		_outImgMeta = { _imgDim.nx, _imgDim.ny, 1, 8 };
+		_outDim = { _imgDim.nx, _imgDim.ny, 1, 8 };
 	}
 	else {
 		if (_imgDim.nc == 3) {
 			// 3ch image
-			_outImgMeta = { _imgDim.nx, _imgDim.ny, 3, 8 };
+			_outDim = { _imgDim.nx, _imgDim.ny, 3, 8 };
 		}
 		else if (_imgDim.nc == 1 && !bayer.empty()) {
 			// bayer image
-			_outImgMeta = { _imgDim.nx / 2, _imgDim.ny / 2, 3, 8 };
+			_outDim = { _imgDim.nx / 2, _imgDim.ny / 2, 3, 8 };
 		}
 	}
 }
@@ -143,14 +143,14 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	if (bitpix == Ishort) {
 		std::valarray<unsigned short> contents;
 		image.read(contents);
-		process(contents, _imgDim, _outImgMeta, bayer, downscale_factor);
-		setBitmap(contents, _outImgMeta, pixData);
+		process(contents, _imgDim, _outDim, bayer, downscale_factor);
+		setBitmap(contents, _outDim, pixData);
 	}
 	else {
 		std::valarray<float> contents;
 		image.read(contents);
-		process(contents, _imgDim, _outImgMeta, bayer, downscale_factor);
-		setBitmap(contents, _outImgMeta, pixData);
+		process(contents, _imgDim, _outDim, bayer, downscale_factor);
+		setBitmap(contents, _outDim, pixData);
 	}
 }
 
@@ -163,6 +163,6 @@ ImageDim FitsImage::getDim()
 
 ImageDim FitsImage::getFinalDim()
 {
-	return _outImgMeta;
+	return _outDim;
 }
 

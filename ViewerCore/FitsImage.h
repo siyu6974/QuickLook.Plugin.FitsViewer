@@ -39,7 +39,7 @@ __declspec(dllexport) typedef struct {
 class FitsImage
 {
 	ImageDim _imgDim;
-	ImageDim _outImgMeta;
+	ImageDim _outDim;
 	std::unique_ptr<FITS> pInfile;
 
 public:
