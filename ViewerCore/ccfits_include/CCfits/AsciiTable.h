@@ -72,7 +72,7 @@ namespace CCfits {
 
 */
 
-/*! \fn     AsciiTable::AsciiTable (FITSBase * p, const String &hduName, bool readFlag, const std::vector<String>& keys, int version);
+/*! \fn     AsciiTable::AsciiTable (FITS * p, const String &hduName, bool readFlag, const std::vector<String>& keys, int version);
 
     \brief reading constructor:  Construct a AsciiTable extension from an extension of an existing disk file.
 
@@ -82,7 +82,7 @@ namespace CCfits {
     is optimized, so it is more efficient to read data at the point of instantiation.
     This favours a "resource acquisition is initialization" model of data management.
 
-    \param p        pointer to FITSBase object for internal use
+    \param p        pointer to FITS object for internal use
     \param hduName  name of AsciiTable object to be read.
     \param readFlag flag to determine whether to read data on construction
     \param keys     (optional) a list of keywords/columns to be read. The implementation
@@ -92,7 +92,7 @@ namespace CCfits {
                     extension that matches hduName.
 */
 
-/*!  \fn  AsciiTable::AsciiTable (FITSBase* p, const String &hduName, int rows,  const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+/*!  \fn  AsciiTable::AsciiTable (FITS* p, const String &hduName, int rows,  const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
 
     \brief writing constructor: create new Ascii Table object with the specified columns
 
@@ -117,7 +117,7 @@ namespace CCfits {
 
 */
 
-/*!  \fn    AsciiTable::AsciiTable (FITSBase* p, int number);
+/*!  \fn    AsciiTable::AsciiTable (FITS* p, int number);
 
     \brief read AsciiTable with HDU number \p number from existing file. 
 
@@ -137,19 +137,19 @@ namespace CCfits {
   {
 
     public:
-        virtual AsciiTable * clone (FITSBase* p) const;
+        virtual AsciiTable * clone (FITS* p) const;
         virtual void readData (bool readFlag = false, const std::vector<String>& keys = std::vector<String>());
         virtual void addColumn (ValueType type, const String& columnName, long repeatWidth, const String& colUnit = String(""), long decimals = 0, size_t columnNumber = 0);
 
       // Additional Public Declarations
 
     protected:
-        AsciiTable (FITSBase* p, const String &hduName = String(""), bool readFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
-        AsciiTable (FITSBase* p, const String &hduName, int rows, const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+        AsciiTable (FITS* p, const String &hduName = String(""), bool readFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
+        AsciiTable (FITS* p, const String &hduName, int rows, const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
         //	ExtHDU constructor for getting ExtHDUs by number.
         //	Necessary since EXTNAME is a reserved not required
         //	keyword.
-        AsciiTable (FITSBase* p, int number);
+        AsciiTable (FITS* p, int number);
         ~AsciiTable();
 
       // Additional Protected Declarations

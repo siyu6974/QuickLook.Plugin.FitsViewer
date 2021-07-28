@@ -64,7 +64,7 @@ namespace CCfits {
   *  Tdblcomplex=TDBLCOMPLEX, 
   *  VTbit= -TBIT, 
   *  VTbyte=-TBYTE,
-  *  VTlogical=-Tlogical,
+  *  VTlogical=-TLOGICAL,
   *  VTstring=-TSTRING,
   *  VTushort=-TUSHORT,
   *  VTshort=-TSHORT,
@@ -78,11 +78,44 @@ namespace CCfits {
   *  VTcomplex=-TCOMPLEX,
   *  VTdblcomplex=-TDBLCOMPLEX
   */
-  typedef enum {Tnull, Tbit = TBIT, Tbyte = TBYTE, Tlogical = TLOGICAL, Tstring = TSTRING, Tushort = TUSHORT, Tshort = TSHORT,Tuint = TUINT,Tint = TINT, Tulong = TULONG,Tlong = TLONG, Tlonglong = TLONGLONG, Tfloat = TFLOAT, Tdouble = TDOUBLE, Tcomplex = TCOMPLEX, Tdblcomplex=TDBLCOMPLEX, VTbit= -TBIT, VTbyte=-TBYTE,VTlogical=-Tlogical, VTstring=-TSTRING, VTushort=-TUSHORT,VTshort=-TSHORT,VTuint=-TUINT, VTint=-TINT,VTulong=-TULONG,VTlong=-TLONG,VTlonglong=-TLONGLONG,VTfloat=-TFLOAT,VTdouble=-TDOUBLE,VTcomplex=-TCOMPLEX,VTdblcomplex=-TDBLCOMPLEX} ValueType;
+  typedef enum {
+      Tnull, 
+      Tbit        = TBIT, 
+      Tbyte       = TBYTE, 
+      Tlogical    = TLOGICAL, 
+      Tstring     = TSTRING, 
+      Tushort     = TUSHORT, 
+      Tshort      = TSHORT, 
+      Tuint       = TUINT, 
+      Tint        = TINT, 
+      Tulong      = TULONG, 
+      Tlong       = TLONG, 
+      Tlonglong   = TLONGLONG, 
+      Tfloat      = TFLOAT, 
+      Tdouble     = TDOUBLE, 
+      Tcomplex    = TCOMPLEX, 
+      Tdblcomplex = TDBLCOMPLEX, 
+      VTbit       = -TBIT, 
+      VTbyte      = -TBYTE, 
+      VTlogical   = -TLOGICAL, 
+      VTstring    = -TSTRING, 
+      VTushort    = -TUSHORT, 
+      VTshort     = -TSHORT, 
+      VTuint      = -TUINT, 
+      VTint       = -TINT, 
+      VTulong     = -TULONG, 
+      VTlong      = -TLONG, 
+      VTlonglong  = -TLONGLONG, 
+      VTfloat     = -TFLOAT, 
+      VTdouble    = -TDOUBLE, 
+      VTcomplex   = -TCOMPLEX, 
+      VTdblcomplex= -TDBLCOMPLEX
+  } ValueType;
 
 
-
-  typedef enum {AnyHdu=-1, ImageHdu, AsciiTbl, BinaryTbl} HduType;
+  // GroupTbl isn't a real CFITSIO HDU type, but we use it when creating 
+  // new Grouping Tables
+  typedef enum {AnyHdu=-1, ImageHdu, AsciiTbl, BinaryTbl, GroupTbl} HduType;
 
 
 

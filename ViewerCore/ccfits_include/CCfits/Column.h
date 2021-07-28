@@ -1202,6 +1202,8 @@ namespace CCfits {
         friend void Table::initRead();
 
         friend void Table::reindex(int startNum, bool isInsert);
+        
+        friend void Table::updateRows();
 
     protected:
         Column (int columnIndex, 	// The column index, i.e. the integer n in the keyword TCOLn
@@ -1239,6 +1241,7 @@ namespace CCfits {
         //	Insert one or more blank rows into a FITS column.
         virtual void insertRows (long first, long number = 1) = 0;
         virtual void deleteRows (long first, long number = 1) = 0;
+        virtual size_t getStoredDataSize() const = 0;
         static void loadColumnKeys ();
         void name (const String& value);
         void format (const String& value);

@@ -301,7 +301,7 @@ object.
 
   };
 
-  struct MatchStem : public std::binary_function<string,string,bool>
+  struct MatchStem
   {
           bool operator()(const string& left, const string& right) const;
   };
@@ -462,7 +462,7 @@ object.
 
 
     template <class T>
-    struct MatchPtrName : public std::binary_function<T,std::string,bool>  //## Inherits: <unnamed>%39491BC9025D
+    struct MatchPtrName  
     {
           //	Parameterized Class MatchPtrName
           bool operator () (const T& left, const string& right) const;
@@ -476,7 +476,7 @@ object.
 
 
     template <class T>
-    struct MatchName : public std::binary_function<T,std::string,bool>  //## Inherits: <unnamed>%39491BC50121
+    struct MatchName     
     {
           bool operator () (const T& left, const string& right) const;
 
@@ -489,7 +489,7 @@ object.
 
 
     template <class T>
-    struct MatchNum : public std::binary_function<T,int,bool>  //## Inherits: <unnamed>%39491BCE01C0
+    struct MatchNum 
     {
           bool operator () (const T& left, const int& right) const;
 
@@ -554,7 +554,7 @@ object.
 
 
     template <class T>
-    struct MatchPtrNum : public std::binary_function<T,int,bool>  //## Inherits: <unnamed>%39491BD3034B
+    struct MatchPtrNum  
     {
           bool operator () (const T& left, const int& right) const;
 
@@ -595,7 +595,7 @@ object.
 
 
     template <typename T>
-    struct ComparePtrIndex : public std::binary_function<T,T,bool>  //## Inherits: <unnamed>%3B24DB930299
+    struct ComparePtrIndex 
     {
           bool operator () (const T* left, const T* right);
 

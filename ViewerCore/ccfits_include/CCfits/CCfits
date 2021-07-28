@@ -2,6 +2,8 @@
 #ifndef CCFITS
 #define CCFITS  20031208
 
+#ifndef CCFITSCOOKBOOK_BUILD
+
 #include <CCfits/CCfits.h>
 
 #include <CCfits/FITS.h>
@@ -16,6 +18,23 @@
 #include <CCfits/FitsError.h>
 #include <CCfits/FITSUtilT.h>
 #include <CCfits/PHDUT.h>
+#include <CCfits/GroupTable.h>
 
+#else
+#include <CCfits.h>
+#include <FITS.h>
+#include <BinTable.h>
+#include <AsciiTable.h>
+#include <ColumnVectorData.h>
+#include <ColumnData.h>
+#include <ColumnT.h>
+#include <ExtHDUT.h>
+#include <KeywordT.h>
+#include <KeyData.h>
+#include <FitsError.h>
+#include <FITSUtilT.h>
+#include <PHDUT.h>
+#include <GroupTable.h>
+#endif
 
 #endif

@@ -50,7 +50,7 @@ namespace CCfits {
 */
 
 
-/*!  \fn Keyword::Keyword (const String &keyname, ValueType keytype, HDU* p, const String &comment = "");
+/*!  \fn Keyword::Keyword (const String &keyname, ValueType keytype, HDU* p, const String &comment = "", bool isLongStr = false);
 
       \brief Keyword constructor. 
 
@@ -155,7 +155,7 @@ namespace CCfits {
        \param val (T) Will be filled with the keyword value, and is also the function return value.
 
        <b>Allowed T types:</b> CCfits stores keyword values of type U in a templated subclass of
-       Keyword, <b>KeyData<U></b>.  Normally U is set when reading the Keyword in from the file, 
+       Keyword, <b>KeyData\<U\></b>.  Normally U is set when reading the Keyword in from the file, 
        and is limited to types int, double, string, bool, and complex<float>.
        (The exception is when the user has created and added a new Keyword using an
        HDU::addKey function, in which case they might have specified other types for U.)  
@@ -180,7 +180,7 @@ namespace CCfits {
        \param newValue (T) New value for the Keyword
 
        <b>Allowed T types:</b> This must copy <i>newValue</i> to a data member of type U in the
-       Keyword subclass <b>KeyData<U></b> (see description for Keyword::value (T& val) for more
+       Keyword subclass <b>KeyData\<U\></b> (see description for Keyword::value (T& val) for more
        details).  To avoid compilation errors, it is generally best to provide a <i>newValue</i>
        of type T = type U, though the following type conversions will also be handled:
 
@@ -230,6 +230,7 @@ namespace CCfits {
         ValueType keytype () const;
         const String& comment () const;
         const String& name () const;
+        bool isLongStr () const;
 
     public:
       // Additional Public Declarations
@@ -240,7 +241,11 @@ namespace CCfits {
       void setValue(const T& newValue);
     protected:
         Keyword(const Keyword &right);
-        Keyword (const String &keyname, ValueType keytype, HDU* p, const String &comment = "");
+        Keyword (const String &keyname,
+                 ValueType keytype,
+                 HDU* p,
+                 const String &comment = "",
+                 bool isLongStr = false);
 
         virtual void copy (const Keyword& right);
         virtual bool compare (const Keyword &right) const;
@@ -260,6 +265,7 @@ namespace CCfits {
         HDU* m_parent;
         String m_comment;
         String m_name;
+        bool m_isLongStr;
 
       // Additional Implementation Declarations
       friend std::ostream &operator << (std::ostream &s, const Keyword &right);
@@ -314,6 +320,11 @@ inline std::ostream& operator << (std::ostream &s, const Keyword &right)
   inline const String& Keyword::name () const
   {
     return m_name;
+  }
+
+  inline bool Keyword::isLongStr () const
+  {
+    return m_isLongStr;
   }
 
 } // namespace CCfits

@@ -56,7 +56,7 @@ namespace CCfits {
     public:
         virtual ~ImageExt();
 
-        virtual ImageExt<T> * clone (FITSBase* p) const;
+        virtual ImageExt<T> * clone (FITS* p) const;
         virtual void readData (bool readFlag = false, const std::vector<String>& keys = std::vector<String>());
         virtual void zero (double value);
         virtual void scale (double value);
@@ -68,8 +68,8 @@ namespace CCfits {
       // Additional Public Declarations
 
     protected:
-        ImageExt (FITSBase* p, const String &hduName, bool readDataFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
-        ImageExt (FITSBase* p, const String &hduName, int bpix, int naxis, const std::vector<long>& naxes, int version = 1);
+        ImageExt (FITS* p, const String &hduName, bool readDataFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
+        ImageExt (FITS* p, const String &hduName, int bpix, int naxis, const std::vector<long>& naxes, int version = 1);
 
       // Additional Protected Declarations
         virtual void checkExtensionType() const;
@@ -137,7 +137,7 @@ namespace CCfits {
   }
 
   template <typename T>
-  ImageExt<T>::ImageExt (FITSBase* p, const String &hduName, bool readDataFlag, const std::vector<String>& keys, int version)
+  ImageExt<T>::ImageExt (FITS* p, const String &hduName, bool readDataFlag, const std::vector<String>& keys, int version)
       : ExtHDU(p,ImageHdu,hduName,version),  m_data()
   {
   initRead();
@@ -145,7 +145,7 @@ namespace CCfits {
   }
 
   template <typename T>
-  ImageExt<T>::ImageExt (FITSBase* p, const String &hduName, int bpix, int naxis, const std::vector<long>& naxes, int version)
+  ImageExt<T>::ImageExt (FITS* p, const String &hduName, int bpix, int naxis, const std::vector<long>& naxes, int version)
       : ExtHDU(p,ImageHdu,hduName,bpix,naxis,naxes,version), m_data()
   {
   // resize m_image according to naxes, and data according to m_image,
@@ -188,7 +188,7 @@ namespace CCfits {
   }
 
   template <typename T>
-  ImageExt<T> * ImageExt<T>::clone (FITSBase* p) const
+  ImageExt<T> * ImageExt<T>::clone (FITS* p) const
   {
   ImageExt<T>* cloned = new ImageExt<T>(*this);
   cloned->parent() = p;

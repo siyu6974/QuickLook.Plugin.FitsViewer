@@ -19,7 +19,7 @@
 #include "FITSUtil.h"
 
 namespace CCfits {
-  class FITSBase;
+  class FITS;
 
 } // namespace CCfits
 // for CLONE_DEFECT
@@ -52,7 +52,7 @@ namespace CCfits {
 
   */
 
-  /*! \fn PHDU::PHDU (FITSBase* p, int bpix, int naxis, const std::vector<long>& axes)
+  /*! \fn PHDU::PHDU (FITS* p, int bpix, int naxis, const std::vector<long>& axes)
 
   \brief Writing Primary HDU constructor, called by PrimaryHDU<T> class
 
@@ -64,7 +64,7 @@ namespace CCfits {
 
   */
 
-/* !\fn  PHDU::PHDU (FITSBase* p)
+/* !\fn  PHDU::PHDU (FITS* p)
 
     \brief Reading Primary HDU constructor.
    Constructor used  when reading the primary HDU from an existing file.
@@ -90,7 +90,7 @@ namespace CCfits {
 
 */
 
-/*! \fn  virtual PHDU::clone(FITSbase* p) const = 0;
+/*! \fn  virtual PHDU::clone(FITS* p) const = 0;
 
         \brief virtual copy constructor for Primary HDUs. 
 
@@ -274,7 +274,7 @@ namespace CCfits {
         //	optional keywords if supplied. Thus, with no arguments,
         //	readData() does nothing.
         virtual void readData (bool readFlag = false, const std::vector<String>& keys = std::vector<String>()) = 0;
-        virtual PHDU * clone (FITSBase* p) const = 0;
+        virtual PHDU * clone (FITS* p) const = 0;
         virtual void zero (double value);
         virtual void scale (double value);
         virtual double zero () const;
@@ -364,11 +364,11 @@ namespace CCfits {
         PHDU(const PHDU &right);
         //	Constructor for new FITS objects, takes as arguments
         //	the required keywords for a primary HDU.
-        PHDU (FITSBase* p, int bpix, int naxis, const std::vector<long>& axes);
+        PHDU (FITS* p, int bpix, int naxis, const std::vector<long>& axes);
         //	Custom constructor. Allows specification of data to be read and whether to read data at
         //	construction or wait until the image data are requested. The default is 'lazy initialization:'
         //	wait until asked.
-        PHDU (FITSBase* p = 0);
+        PHDU (FITS* p = 0);
 
         virtual void initRead ();
         void simple (bool value);

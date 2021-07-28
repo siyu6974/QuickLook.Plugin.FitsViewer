@@ -195,7 +195,7 @@ namespace CCfits {
 
 
 
-/*! \fn   Table::Table (FITSBase* p, HduType xtype, const String &hduName, int rows, const std::vector<String>& columnName, const std::vector<String>& columnFmt, const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+/*! \fn   Table::Table (FITS* p, HduType xtype, const String &hduName, int rows, const std::vector<String>& columnName, const std::vector<String>& columnFmt, const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
 
 
         \brief Constructor to be used for creating new HDUs.
@@ -210,15 +210,26 @@ namespace CCfits {
         \param version    a version number
 */
 
+  
+/*! \fn   Table::Table (FITS* p, int version = 1, const String & groupName = String(""));
 
-/*! \fn      Table::Table (FITSBase* p, HduType xtype, const String &hduName = String(""), int version = 1);
+      	\brief Constructor to be called when creating a grouping table.
+     
+        \param p          The FITS file in which to place the new HDU
+        \param version    Version number
+        \param groupName  The name of the grouping table
+
+*/
+  
+
+/*! \fn      Table::Table (FITS* p, HduType xtype, const String &hduName = String(""), int version = 1);
 
       	\brief Constructor to be called by operations that read Table specified by hduName and version.
 
-
 */
 
-/*! \fn      Table::Table (FITSBase* p, HduType xtype, int number);
+  
+/*! \fn      Table::Table (FITS* p, HduType xtype, int number);
 
       \brief Table constructor for getting Tables by number. 
 
@@ -322,14 +333,16 @@ namespace CCfits {
       // Additional Public Declarations
 
     protected:
-        Table (FITSBase* p, HduType xtype, const String &hduName, int rows, 	// ! Number of rows in table at creation, to be used to initialize NAXIS2
+        Table (FITS* p, HduType xtype, const String &hduName, int rows, 	// ! Number of rows in table at creation, to be used to initialize NAXIS2
         const std::vector<String>& columnName, const std::vector<String>& columnFmt, const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+        // ctor for creating a Group Table
+        Table (FITS* p, int version = 1, const String & groupName = String(""));
         //	To be called by reading operations.
-        Table (FITSBase* p, HduType xtype, const String &hduName = String(""), int version = 1);
+        Table (FITS* p, HduType xtype, const String &hduName = String(""), int version = 1);
         //	ExtHDU constructor for getting ExtHDUs by number.
         //	Necessary since EXTNAME is a reserved not required
         //	keyword.
-        Table (FITSBase* p, HduType xtype, int number);
+        Table (FITS* p, HduType xtype, int number);
 
         virtual std::ostream & put (std::ostream &s) const;
         void init (bool readFlag = false, const std::vector<String>& keys = std::vector<String>());

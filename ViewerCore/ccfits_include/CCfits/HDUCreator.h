@@ -23,7 +23,7 @@
 #include "FitsError.h"
 
 namespace CCfits {
-  class FITSBase;
+  class FITS;
   class HDU;
   class PHDU;
   class ExtHDU;
@@ -39,7 +39,7 @@ namespace CCfits {
   {
 
     public:
-        HDUCreator (FITSBase* p);
+        HDUCreator (FITS* p);
         ~HDUCreator();
 
         //	Read a specified HDU from given fitsfile and
@@ -55,6 +55,11 @@ namespace CCfits {
         //	With no arguments this reads the PrimaryHDU.
         HDU * getHdu (int index = 0, bool readDataFlag = false, const std::vector<String> &keys = std::vector<String>());
         ExtHDU * createImage (const String &name, int bitpix, long naxis, const std::vector<long>& naxes, int version);
+        // MakeImage needs to be public so that FITS.h can friend it, so that 
+        // MakeImage can see FITS::m_pHDU pointer, rather than FITS.h friending
+        // entire HDUCreator class
+        PHDU * MakeImage (int bpix, int naxis, const std::vector<long>& naxes);
+        
 
       // Additional Public Declarations
 
@@ -62,24 +67,23 @@ namespace CCfits {
       // Additional Protected Declarations
 
     private:
-        PHDU * MakeImage (int bpix, int naxis, const std::vector<long>& naxes);
         HDU* MakeTable (const String &name, HduType xtype, int rows, const std::vector<String>& colName, const std::vector<String>& colFmt, const std::vector<String>& colUnit, int version);
         HDU * Make (int index, bool readDataFlag, const std::vector<String> &keys);
         ExtHDU * MakeImage (const String &name, int bpix, long naxis, const std::vector<long>& naxes, int version);
         void getScaling (long& type, double& zero, double& scale) const;
-        void parent (FITSBase* value);
+        void parent (FITS* value);
         
         // Utility function to implement both of the Make() function interfaces.
         HDU* commonMake(const String& hduName, bool readDataFlag, const std::vector<String> &keys, bool primary, int version);
-
-      // Data Members for Class Attributes
+      
+        // Data Members for Class Attributes
         HDU *m_hdu;
 
       // Additional Private Declarations
 
     private: //## implementation
       // Data Members for Associations
-        FITSBase* m_parent;
+        FITS* m_parent;
 
       // Additional Implementation Declarations
 
@@ -113,7 +117,7 @@ namespace CCfits {
   return m_hdu;
   }
 
-  inline void HDUCreator::parent (FITSBase* value)
+  inline void HDUCreator::parent (FITS* value)
   {
     m_parent = value;
   }

@@ -479,7 +479,7 @@ namespace CCfits
                         PrimaryHDU<S>& image = dynamic_cast<PrimaryHDU<S>&>(*this);
                         image.writeImage(firstVertex,lastVertex,stride,data);  
                 }
-                catch (std::bad_cast)
+                catch (std::bad_cast&)
                 {
                          // write input type S to Image type...
 

@@ -94,7 +94,7 @@ namespace CCfits {
 
 */
 
-/*! \fn      virtual ExtHDU * ExtHDU::clone (FITSBase* p) const = 0;
+/*! \fn      virtual ExtHDU * ExtHDU::clone (FITS* p) const = 0;
         \brief virtual copy constructor
 
 */
@@ -162,12 +162,12 @@ namespace CCfits {
 */
 
 
-/*! \fn      ExtHDU::ExtHDU (FITSBase* p, HduType xtype, const String &hduName, int version);
+/*! \fn      ExtHDU::ExtHDU (FITS* p, HduType xtype, const String &hduName, int version);
         \brief default constructor, required as Standard Library Container content.
 
 */
 
-/*! \fn      ExtHDU::ExtHDU (FITSBase* p, HduType xtype, const String &hduName, int bitpix, int naxis, const std::vector<long>& axes, int version);
+/*! \fn      ExtHDU::ExtHDU (FITS* p, HduType xtype, const String &hduName, int bitpix, int naxis, const std::vector<long>& axes, int version);
         \brief	writing constructor. 
 
       The writing constructor forces the user to supply a name for the HDU. The bitpix,
@@ -175,7 +175,7 @@ namespace CCfits {
       any HDUs.
 */
 
-/*! \fn      ExtHDU::ExtHDU (FITSBase* p, HduType xtype, int number);
+/*! \fn      ExtHDU::ExtHDU (FITS* p, HduType xtype, int number);
       \brief ExtHDU constructor for getting ExtHDUs by number.
 
       Necessary since EXTNAME is a reserved, not required, keyword. But
@@ -464,7 +464,7 @@ namespace CCfits {
         static void readHduName (const fitsfile* fptr, int hduIndex, String& hduName, int& hduVersion);
         virtual void readData (bool readFlag = false, const std::vector<String>& keys = std::vector<String>()) = 0;
         const String& name () const;
-        virtual HDU * clone (FITSBase* p) const = 0;
+        virtual HDU * clone (FITS* p) const = 0;
         //	By all means necessary, set the fitsfile pointer so that
         //	this HDU is the current HDU.
         //
@@ -570,14 +570,14 @@ namespace CCfits {
 
     protected:
         //	ExtHDU needs a default constructor. This is it.
-        ExtHDU (FITSBase* p, HduType xtype, const String &hduName, int version);
+        ExtHDU (FITS* p, HduType xtype, const String &hduName, int version);
         //	The writing constructor. Forces the user to supply a name
         //	for the HDU
-        ExtHDU (FITSBase* p, HduType xtype, const String &hduName, int bitpix, int naxis, const std::vector<long>& axes, int version);
+        ExtHDU (FITS* p, HduType xtype, const String &hduName, int bitpix, int naxis, const std::vector<long>& axes, int version);
         //	ExtHDU constructor for getting ExtHDUs by number.
         //	Necessary since EXTNAME is a reserved not required
         //	keyword.
-        ExtHDU (FITSBase* p, HduType xtype, int number);
+        ExtHDU (FITS* p, HduType xtype, int number);
 
         virtual std::ostream & put (std::ostream &s) const = 0;
         virtual void setColumn (const String& colname, Column* value);

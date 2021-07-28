@@ -10,6 +10,5 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
-
 #define no_init_all deprecated
 #endif //PCH_H

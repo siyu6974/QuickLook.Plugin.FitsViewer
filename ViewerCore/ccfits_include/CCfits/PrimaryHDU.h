@@ -34,7 +34,7 @@ namespace CCfits {
   {
 
     public:
-        virtual PrimaryHDU<T> * clone (FITSBase* p) const;
+        virtual PrimaryHDU<T> * clone (FITS* p) const;
         //	Read data reads the image if readFlag is true and
         //	optional keywords if supplied. Thus, with no arguments,
         //	readData() does nothing.
@@ -54,11 +54,11 @@ namespace CCfits {
     protected:
         //	Constructor for new FITS objects, takes as arguments
         //	the required keywords for a primary HDU.
-        PrimaryHDU (FITSBase* p, const int bitpix, const int naxis, const std::vector<long>& naxes, const std::valarray<T>& data = std::valarray<T>());
+        PrimaryHDU (FITS* p, const int bitpix, const int naxis, const std::vector<long>& naxes, const std::valarray<T>& data = std::valarray<T>());
         //	Custom constructor. Allows specification of data to be read and whether to read data at
         //	construction or wait until the image data are requested. The default is 'lazy initialization:'
         //	wait until asked.
-        PrimaryHDU (FITSBase* p, bool readFlag = false, const std::vector<String>& keys = std::vector<String>());
+        PrimaryHDU (FITS* p, bool readFlag = false, const std::vector<String>& keys = std::vector<String>());
 
       // Additional Protected Declarations
 
@@ -123,13 +123,13 @@ namespace CCfits {
   }
 
   template <typename T>
-  PrimaryHDU<T>::PrimaryHDU (FITSBase* p, const int bitpix, const int naxis, const std::vector<long>& naxes, const std::valarray<T>& data)
+  PrimaryHDU<T>::PrimaryHDU (FITS* p, const int bitpix, const int naxis, const std::vector<long>& naxes, const std::valarray<T>& data)
         : PHDU(p,bitpix,naxis,naxes),m_data(data)
   {
   }
 
   template <typename T>
-  PrimaryHDU<T>::PrimaryHDU (FITSBase* p, bool readFlag, const std::vector<String>& keys)
+  PrimaryHDU<T>::PrimaryHDU (FITS* p, bool readFlag, const std::vector<String>& keys)
         : PHDU(p), m_data()
   {
   initRead();
@@ -140,7 +140,7 @@ namespace CCfits {
 
 
   template <typename T>
-  PrimaryHDU<T> * PrimaryHDU<T>::clone (FITSBase* p) const
+  PrimaryHDU<T> * PrimaryHDU<T>::clone (FITS* p) const
   {
   PrimaryHDU<T>* cloned = new PrimaryHDU<T>(*this);
   cloned->parent() = p;

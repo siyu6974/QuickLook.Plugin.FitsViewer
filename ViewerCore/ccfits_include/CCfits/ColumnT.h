@@ -184,7 +184,7 @@ namespace CCfits
                        }
 
                    }
-                   catch (std::bad_cast)
+                   catch (std::bad_cast&)
                    {
 			   throw WrongColumnType(name());
                    }
@@ -340,7 +340,7 @@ namespace CCfits
                        }
 
                    }
-                   catch (std::bad_cast)
+                   catch (std::bad_cast&)
                    {
 		        throw WrongColumnType(name());
                    }
@@ -508,7 +508,7 @@ namespace CCfits
                        }
 
                    }
-                   catch (std::bad_cast)
+                   catch (std::bad_cast&)
                    {
                        throw WrongColumnType(name());
                    }     
@@ -669,7 +669,7 @@ namespace CCfits
                        }
 
                    }
-                   catch (std::bad_cast)
+                   catch (std::bad_cast&)
                    {
                        throw WrongColumnType(name());
                    }     
@@ -856,7 +856,7 @@ namespace CCfits
                        }
 
                    }
-                   catch (std::bad_cast)
+                   catch (std::bad_cast&)
                    {
                        throw WrongColumnType(name());
 

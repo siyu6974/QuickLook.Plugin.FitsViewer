@@ -20,7 +20,7 @@
     @todo @b Oded: Associate icons with executable and document files.
     .bmp files for this purpose are in the images subdirectory.
 
-    $Id: MSconfig.h,v 3.5 2010/11/15 17:16:21 gordon Exp $
+    $Id$
 
     Author: Paul_Kunz@slac.stanford.edu */
 

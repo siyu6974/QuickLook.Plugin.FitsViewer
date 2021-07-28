@@ -31,11 +31,11 @@ namespace CCfits {
         KeywordCreator (HDU* p);
         virtual ~KeywordCreator();
 
-        virtual Keyword* MakeKeyword (const String& keyName, const String& comment = String("")) = 0;
+        virtual Keyword* MakeKeyword (const String& keyName, const String& comment = String(""), bool isLongStr = false) = 0;
         static Keyword* getKeyword (const String& keyName, HDU* p);
         //	Additional Public Declarations
         virtual void reset ();
-        virtual Keyword* createKeyword (const String& keyName, const String& comment = String(""));
+        virtual Keyword* createKeyword (const String& keyName, const String& comment = String(""), bool isLongStr = false);
         //	This version of getKeyword is for reading a keyword
         //	in with a specified type.
         static Keyword* getKeyword (const String& keyName, ValueType keyType, HDU* p);
@@ -57,9 +57,9 @@ namespace CCfits {
         KeywordCreator(const KeywordCreator &right);
         KeywordCreator & operator=(const KeywordCreator &right);
 
-        static Keyword* parseRecord (const String& name, const String& valueString, const String& comment, HDU* hdu);
+        static Keyword* parseRecord (const String& name, const String& valueString, const String& comment, HDU* hdu, bool isLongStr = false);
         static bool isContinued (const String& value);
-        static void getLongValueString (HDU* p, const String& keyName, String& value);
+        static void getLongValueString (HDU* p, const String& keyName, String& value, String& comment);
 
       // Additional Private Declarations
 

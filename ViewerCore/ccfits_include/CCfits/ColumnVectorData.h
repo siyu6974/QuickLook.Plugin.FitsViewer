@@ -29,8 +29,7 @@
 #include <memory>
 #include <numeric>
 #include <algorithm>
-#undef max
-#undef min
+
 namespace CCfits {
 
         class Table;
@@ -107,6 +106,7 @@ namespace CCfits {
         //	Insert one or more blank rows into a FITS column.
         virtual void insertRows (long first, long number = 1);
         virtual void deleteRows (long first, long number = 1);
+        virtual size_t getStoredDataSize() const;
         void doWrite (T* array, long row, long rowSize, long firstElem, T* nullValue);
 
       // Additional Private Declarations
@@ -828,58 +828,45 @@ namespace CCfits {
   template <typename T>
   void ColumnVectorData<T>::insertRows (long first, long number)
   {
-    typename std::vector<std::valarray<T> >::iterator in;
-    if (first !=0) 
+    if (first >= 0 && first <= static_cast<long>(m_data.size()))
     {
-            in = m_data.begin()+first;
-    }
-    else
-    {
-            in = m_data.begin();
-    }           
+       typename std::vector<std::valarray<T> >::iterator in;
+       if (first !=0) 
+       {
+               in = m_data.begin()+first;
+       }
+       else
+       {
+               in = m_data.begin();
+       }           
 
-    // non-throwing operations.
-    m_data.insert(in,number,std::valarray<T>(T(),0));
+       // non-throwing operations.
+       m_data.insert(in,number,std::valarray<T>(T(),0));
+    }
   }
 
   template <typename T>
   void ColumnVectorData<T>::deleteRows (long first, long number)
   {
-    // the following is an ugly workaround for a bug in g++ v3.0 that
-    // does not erase vector elements cleanly in this case.
-
-    long N = static_cast<long>(m_data.size());
-    size_t newSize = static_cast<size_t>(N - number);      
-    std::vector<std::valarray<T> > __tmp(newSize);
-
-    long lastDeleted( number + first - 1 );
-    long firstDeleted(first);
-    long count(0);
+    // Don't assume the calling routine (ie. Table's deleteRows)
+    // knows Column's current m_data size.  m_data may still be
+    // size 0 if no read operations have been performed on Column. 
+    // Therefore perform range checking before erasing.
+    const long curSize = static_cast<long>(m_data.size());
+    if (curSize>0 && first <= curSize)
     {
-       for (long j = 1; j <= N; ++j)
-       {
-	  if (  (j - firstDeleted)*(lastDeleted - j) >= 0 )	
-	  {                ++count; 
-	  } 
-	  else
-	  {
-             __tmp[j - 1 - count].resize(m_data[j - 1].size());
-             __tmp[j - 1 - count] = m_data[j - 1];
-	  }
-       }                           
+       const long last = std::min(curSize, first-1+number);
+       m_data.erase(m_data.begin()+first-1,m_data.begin()+last);
     }
-
-    m_data.clear();
-    m_data.resize(newSize);
-    {
-       for (size_t j = 0; j < newSize; ++j)
-       {
-	  m_data[j].resize(__tmp[j].size());
-    	  m_data[j] = __tmp[j];
-       }
-    }
+     
   }
 
+  template <typename T>
+  size_t ColumnVectorData<T>::getStoredDataSize() const
+  {
+     return m_data.size();
+  }
+  
   template <typename T>
   void ColumnVectorData<T>::setDataLimits (T* limits)
   {

@@ -32,9 +32,13 @@ namespace CCfits {
   {
 
     public:
-        KeyData(const KeyData< T > &right);
-        KeyData (const String &keyname, ValueType keytype, const T &value, HDU* p, 	// A pointer to the HDU containing the keyword. This is passed to the base class constructor.
-        const String &comment = "");
+        KeyData (const KeyData< T > &right);
+        KeyData (const String &keyname,
+                 ValueType keytype,
+                 const T &value,
+                 HDU* p, 	// A pointer to the HDU containing the keyword. This is passed to the base class constructor.
+                 const String &comment = "",
+                 bool isLongStr = false);
         virtual ~KeyData();
 
         virtual KeyData <T>* clone () const;
@@ -280,8 +284,13 @@ template<> void KeyData<std::complex<double> >::keyval(const std::complex<double
   }
 
   template <typename T>
-  KeyData<T>::KeyData (const String &keyname, ValueType keytype, const T &value, HDU* p, const String &comment)
-       : Keyword(keyname, keytype, p, comment), 
+  KeyData<T>::KeyData (const String &keyname,
+                       ValueType keytype,
+                       const T &value,
+                       HDU* p,
+                       const String &comment,
+                       bool isLongStr)
+       : Keyword(keyname, keytype, p, comment, isLongStr),
          m_keyval(value)
   {
   }

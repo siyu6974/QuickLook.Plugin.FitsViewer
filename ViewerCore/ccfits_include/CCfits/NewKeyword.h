@@ -31,7 +31,7 @@ namespace CCfits {
         virtual ~NewKeyword();
 
         //	Additional Protected Declarations
-        virtual Keyword* MakeKeyword (const String& keyName, const String& keyComment = String(""));
+        virtual Keyword* MakeKeyword (const String& keyName, const String& keyComment = String(""), bool isLongStr = false);
         const T keyData () const;
         void keyData (T value);
 
@@ -86,10 +86,10 @@ namespace CCfits {
 
 
   template <typename T>
-  Keyword* NewKeyword<T>::MakeKeyword (const String& keyName, const String& keyComment)
+  Keyword* NewKeyword<T>::MakeKeyword (const String& keyName, const String& keyComment, bool isLongStr)
   {
   FITSUtil::MatchType<T> keyType;
-  return new KeyData<T>(keyName,keyType(),m_keyData,forHDU(),keyComment);
+  return new KeyData<T>(keyName,keyType(),m_keyData,forHDU(),keyComment,isLongStr);
   }
 
   // Additional Declarations

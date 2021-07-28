@@ -24,8 +24,8 @@
 #include "FITSUtil.h"
 using std::complex;
 #include "FITS.h"
-#undef max
-#undef min
+
+
 namespace CCfits {
 
 
@@ -72,6 +72,8 @@ namespace CCfits {
         //	Insert one or more blank rows into a FITS column.
         virtual void insertRows (long first, long number = 1);
         virtual void deleteRows (long first, long number = 1);
+        
+        virtual size_t getStoredDataSize() const;
 
       // Additional Private Declarations
 
@@ -284,49 +286,42 @@ namespace CCfits {
   void ColumnData<T>::writeData (T* indata, long nRows, long firstRow, T* nullValue)
   {
 
-          // set columnData's data member to equal what's written to file.
-          // indata has size nRows: elements firstRow to firstRow + nRows - 1 will be written.
-          // if this exceeds the current rowlength of the HDU, update the return value for
-          // rows() in the parent after the fitsio call.
-          int status(0);
-          long elementsToWrite(nRows + firstRow -1);
-          // get a copy for restorative action.   
-          std::vector<T> __tmp(m_data);
+     // set columnData's data member to equal what's written to file.
+     // indata has size nRows: elements firstRow to firstRow + nRows - 1 will be written.
+     // if this exceeds the current rowlength of the HDU, update the return value for
+     // rows() in the parent after the fitsio call.
+     int status(0);
 
+     try
+     {
+        if (nullValue)
+        {
+           if (fits_write_colnull(fitsPointer(), type(), index(), firstRow, 1, nRows,
+			     indata, nullValue, &status) != 0) throw FitsError(status);
+        }
+        else
+        {
+           if (fits_write_col(fitsPointer(), type(), index(), firstRow, 1, nRows,
+			     indata, &status) != 0) throw FitsError(status);
+        }
 
-          if (elementsToWrite > static_cast<long>(m_data.size())) 
-          {
+     }
+     catch (FitsError) // the only thing that can throw here.
+     {
+          if (status == NO_NULL) throw NoNullValue(name());
+          else throw;
+     }      
+     long elementsToWrite(nRows + firstRow -1);
 
-                  m_data.resize(elementsToWrite,T());
-          }
+     if (elementsToWrite > static_cast<long>(m_data.size())) 
+     {
+        m_data.resize(elementsToWrite,T());
+     }
 
-          std::copy(&indata[0],&indata[nRows],m_data.begin()+firstRow-1);
+     std::copy(&indata[0],&indata[nRows],m_data.begin()+firstRow-1);
+     // tell the Table that the number of rows has changed
+     parent()->updateRows();
 
-          // if successful, write to disk.
-
-          try
-          {
-             if (nullValue)
-             {
-                if (fits_write_colnull(fitsPointer(), type(), index(), firstRow, 1, nRows,
-			          indata, nullValue, &status) != 0) throw FitsError(status);
-             }
-             else
-             {
-                if (fits_write_col(fitsPointer(), type(), index(), firstRow, 1, nRows,
-			          indata, &status) != 0) throw FitsError(status);
-             }
-
-                // tell the Table that the number of rows has changed
-                parent()->updateRows();
-          }
-          catch (FitsError) // the only thing that can throw here.
-          {
-                  // reset to original content and rethrow the exception.
-                  m_data = __tmp;
-                  if (status == NO_NULL) throw NoNullValue(name());
-                  else throw;
-          }      
   }
 
   template <typename T>
@@ -341,25 +336,48 @@ namespace CCfits {
   template <typename T>
   void ColumnData<T>::insertRows (long first, long number)
   {
-    FITSUtil::FitsNullValue<T> blank;
-    typename std::vector<T>::iterator in;
-    if (first !=0) 
+    // Don't assume the calling routine (ie. Table's insertRows)
+    // knows Column's current m_data size.  m_data may still be
+    // size 0 if no read operations have been performed on Column. 
+    // Therefore perform range checking before inserting.
+    
+    // As with CFITSIO, rows are inserted AFTER 1-based 'first'.
+    if (first >= 0 && first <= static_cast<long>(m_data.size()))
     {
-            in = m_data.begin()+first;
-    }
-    else
-    {
-            in = m_data.begin();
-    }           
+       typename std::vector<T>::iterator in;
+       if (first !=0) 
+       {
+               in = m_data.begin()+first;
+       }
+       else
+       {
+               in = m_data.begin();
+       }           
 
-    // non-throwing operations.
-    m_data.insert(in,number,blank());
+       // non-throwing operations.
+       m_data.insert(in,number,T());
+    }
   }
 
   template <typename T>
   void ColumnData<T>::deleteRows (long first, long number)
   {
-    m_data.erase(m_data.begin()+first-1,m_data.begin()+first-1+number);
+    // Don't assume the calling routine (ie. Table's deleteRows)
+    // knows Column's current m_data size.  m_data may still be
+    // size 0 if no read operations have been performed on Column. 
+    // Therefore perform range checking before erasing.
+    const long curSize = static_cast<long>(m_data.size());
+    if (curSize>0 && first <= curSize)
+    {
+       const long last = std::min(curSize, first-1+number);
+       m_data.erase(m_data.begin()+first-1,m_data.begin()+last);
+    }
+  }
+  
+  template <typename T>
+  size_t ColumnData<T>::getStoredDataSize() const
+  {
+     return m_data.size();
   }
 
   template <typename T>

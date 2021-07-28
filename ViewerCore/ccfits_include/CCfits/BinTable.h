@@ -74,7 +74,7 @@ namespace CCfits {
 
 */
 
-/*! \fn     BinTable::BinTable (FITSBase* p, const String &hduName, bool readFlag, const std::vector<String>& keys, int version);
+/*! \fn     BinTable::BinTable (FITS* p, const String &hduName, bool readFlag, const std::vector<String>& keys, int version);
 
     \brief  reading constructor. 
 
@@ -85,7 +85,7 @@ namespace CCfits {
     is optimized, so it is more efficient to read data at the point of instantiation.
     This favours a "resource acquisition is initialization" model of data management.
 
-    \param p        Pointer to FITSBase class, an internal implementation detail
+    \param p        Pointer to FITS class, an internal implementation detail
     \param hduName  name of BinTable object to be read.
     \param readFlag flag to determine whether to read data on construction
     \param keys     (optional) a list of keywords/columns to be read. The implementation
@@ -95,7 +95,7 @@ namespace CCfits {
                     extension that matches hduName.
 */
 
-/*!  \fn   BinTable::BinTable (FITSBase* p, const String &hduName, int rows,  const std::vector<String>& columnName, const std::vector<String>& columnFmt, const std::vector<String>& columnUnit, int version);
+/*!  \fn   BinTable::BinTable (FITS* p, const String &hduName, int rows,  const std::vector<String>& columnName, const std::vector<String>& columnFmt, const std::vector<String>& columnUnit, int version);
 
     \brief writing constructor
 
@@ -104,7 +104,7 @@ namespace CCfits {
     of each column is determined by the columnFmt argument (TFORM keywords). See
     cfitsio documentation for acceptable values.
 
-    \param p        Pointer to FITSBase class, an internal implementation detail
+    \param p        Pointer to FITS class, an internal implementation detail
     \param hduName  name of BinTable object to be written
     \param rows     number of rows in the table (NAXIS2)    
     \param columnName     array of column names for columns to be constructed.
@@ -118,7 +118,7 @@ namespace CCfits {
 
 */
 
-/*!  \fn    BinTable::BinTable (FITSBase* p, int number);
+/*!  \fn    BinTable::BinTable (FITS* p, int number);
 
     \brief read BinTable with HDU number \p number from existing file represented by fitsfile pointer p.
 */
@@ -131,25 +131,28 @@ namespace CCfits {
   {
 
     public:
-        virtual BinTable * clone (FITSBase* p) const;
+      
+        virtual BinTable * clone (FITS* p) const;
         virtual void readData (bool readFlag = false, const std::vector<String>& keys = std::vector<String>());
         virtual void addColumn (ValueType type, const String& columnName, long repeatWidth, const String& colUnit = String(""), long decimals = 0, size_t columnNumber = 0);
 
       // Additional Public Declarations
 
     protected:
-        BinTable (FITSBase* p, const String &hduName = String(""), bool readFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
-        BinTable (FITSBase* p, const String &hduName, int rows, const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+      
+        BinTable(const BinTable &right);
+        BinTable (FITS* p, const String &hduName = String(""), bool readFlag = false, const std::vector<String>& keys = std::vector<String>(), int version = 1);
+        BinTable (FITS* p, const String &hduName, int rows, const std::vector<String>& columnName = std::vector<String>(), const std::vector<String>& columnFmt = std::vector<String>(), const std::vector<String>& columnUnit = std::vector<String>(), int version = 1);
+        // ctor for creating a grouping table
+        BinTable (FITS* p, int version = 1, const String & groupName = String(""));
         //	ExtHDU constructor for getting ExtHDUs by number.
-        //	Necessary since EXTNAME is a reserved not required
-        //	keyword.
-        BinTable (FITSBase* p, int number);
+        //	Necessary since EXTNAME is a reserved, not required, keyword.
+        BinTable (FITS* p, int number);
         ~BinTable();
 
       // Additional Protected Declarations
 
     private:
-        BinTable(const BinTable &right);
 
         virtual void readTableHeader (int ncols, std::vector<String>& colName, std::vector<String>& colFmt, std::vector<String>& colUnit);
         void readVariableColumns (const std::vector<String> &varColumns);

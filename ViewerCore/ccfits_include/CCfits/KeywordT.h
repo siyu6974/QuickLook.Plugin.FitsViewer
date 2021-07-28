@@ -25,36 +25,35 @@
 namespace CCfits 
 {
 
-   template <typename T>
-   T& Keyword::value (T& val) const
-   {
-      try
-      {
-            const KeyData<T>& thisKey = dynamic_cast<const KeyData<T>&>(*this);
-	    val = thisKey.keyval();
-      }
-      catch (std::bad_cast)
-      {
-         throw Keyword::WrongKeywordValueType(name());
-      }
-      return val;
-   }
+  template <typename T>
+  T& Keyword::value (T& val) const
+  {
+    try
+    {
+      const KeyData<T>& thisKey = dynamic_cast<const KeyData<T>&>(*this);
+      val = thisKey.keyval();
+    }
+    catch (std::bad_cast&)
+    {
+      throw Keyword::WrongKeywordValueType(name());
+    }
+    return val;
+  }
 
-   template <typename T>
-   void Keyword::setValue (const T& newValue)
-   {
-           try
-           {
-                   KeyData<T>& thisKey = dynamic_cast<KeyData<T>&>(*this);
-		   thisKey.keyval(newValue);
-                   thisKey.write();
-           }
-           catch (std::bad_cast)
-           {
-                   throw Keyword::WrongKeywordValueType(name());
-           }
-
-   }
+  template <typename T>
+  void Keyword::setValue (const T& newValue)
+  {
+    try
+    {
+      KeyData<T>& thisKey = dynamic_cast<KeyData<T>&>(*this);
+      thisKey.keyval(newValue);
+      thisKey.write();
+    }
+    catch (std::bad_cast&)
+    {
+      throw Keyword::WrongKeywordValueType(name());
+    }
+  }
 
 #if SPEC_TEMPLATE_IMP_DEFECT || SPEC_TEMPLATE_DECL_DEFECT
    template<>
