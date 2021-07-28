@@ -57,7 +57,7 @@ std::map<string, string> readImageHeader(PHDU& image) {
 
 FitsImage::FitsImage(string path)
 {
-	pInfile = std::unique_ptr<FITS>(new FITS(path, Read, false));
+	pInfile = std::unique_ptr<FITS>(new FITS(path, Read, true));
 	PHDU& image = pInfile->pHDU();
 	header = readImageHeader(image);
 
@@ -141,29 +141,10 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	auto bitpix = image.bitpix();
 
 	if (bitpix == Ishort) {
-		if (header["SWCREATE"].find("N.I.N.A") != std::string::npos) {
-			auto fptr = image.fitsPointer();
-			long nullval = 0;
-			unsigned short *buffer = new unsigned short[_outDim.nx*_outDim.ny]();
-			long nbuffer = _outDim.nx*_outDim.ny;
-			int status, anynull;
-
-			fits_read_img(fptr, TSHORT, 1, nbuffer, &nullval, buffer, &anynull, &status);
-			auto contents = std::valarray<unsigned short>(nbuffer);
-			for (int i = 0; i < nbuffer; i++) {
-				contents[i] = buffer[i];
-			}
-			delete[] buffer;
-
-			process(contents, _imgDim, _outDim, bayer, downscale_factor);
-			setBitmap(contents, _outDim, pixData);
-		}
-		else {
-			std::valarray<unsigned short> contents;
-			image.read(contents);
-			process(contents, _imgDim, _outDim, bayer, downscale_factor);
-			setBitmap(contents, _outDim, pixData);
-		}
+		std::valarray<unsigned short> contents;
+		image.read(contents);
+		process(contents, _imgDim, _outDim, bayer, downscale_factor);
+		setBitmap(contents, _outDim, pixData);
 	}
 	else {
 		std::valarray<float> contents;
