@@ -331,3 +331,6 @@ ASALocalRun/
 /*.qlplugin
 /GitVersion.cs
 /QuickLook.Plugin.Metadata.config
+
+# test files
+fits_resource/

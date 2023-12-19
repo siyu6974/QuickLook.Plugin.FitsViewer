@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="AnimatedImage.cs" />
     <Compile Include="AnimationProvider.cs" />
-    <Compile Include="GitVersion.cs" />
     <Compile Include="ImagePanel.xaml.cs">
       <DependentUpon>ImagePanel.xaml</DependentUpon>
     </Compile>
