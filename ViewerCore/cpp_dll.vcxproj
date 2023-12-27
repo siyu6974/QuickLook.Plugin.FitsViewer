@@ -181,6 +181,7 @@
     <ClInclude Include="downscale.h" />
     <ClInclude Include="FitsImage.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="log.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Stretch.h" />
   </ItemGroup>

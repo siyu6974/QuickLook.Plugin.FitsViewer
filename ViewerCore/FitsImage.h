@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 #include <CCfits/CCfits>
+#include "log.h"
 
 using namespace CCfits;
 using std::string;
@@ -54,6 +55,8 @@ public:
 extern "C" {
 	__declspec(dllexport) FitsImage *FitsImageCreate(const char * path) {
 		string str(path);
+
+		writeToLogFile(str);
 		return new FitsImage(str);
 	}
 

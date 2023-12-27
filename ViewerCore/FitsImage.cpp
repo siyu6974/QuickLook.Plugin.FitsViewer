@@ -23,7 +23,7 @@
 #include "Stretch.h"
 #include "debayer.h"
 #include "downscale.h"
-
+#include "log.h"
 
 
 inline const char * const BoolToString(bool b) {
@@ -57,7 +57,16 @@ std::map<string, string> readImageHeader(PHDU& image) {
 
 FitsImage::FitsImage(string path)
 {
-	pInfile = std::unique_ptr<FITS>(new FITS(path, Read, true));
+	writeToLogFile("FitsImage constructor");
+
+	try
+    {
+		pInfile = std::unique_ptr<FITS>(new FITS(path, Read, true));
+    }
+    catch (std::exception& e)
+    {
+		writeToLogFile(e.what());
+    }
 	PHDU& image = pInfile->pHDU();
 	header = readImageHeader(image);
 
