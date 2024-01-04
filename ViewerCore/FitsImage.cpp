@@ -57,6 +57,7 @@ std::map<string, string> readImageHeader(PHDU& image) {
 
 FitsImage::FitsImage(string path)
 {
+	writeToLogFile(path.c_str());
 	writeToLogFile("FitsImage constructor");
 
 	try
@@ -90,17 +91,24 @@ FitsImage::FitsImage(string path)
 			_outDim = { _imgDim.nx / 2, _imgDim.ny / 2, 3, 8 };
 		}
 	}
+	writeToLogFile("FitsImage constructor finish");
 }
 
 
 template <typename T>
 void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& outDim, string bayer, int df) {
+	writeToLogFile("Process start");
+
 	if (inDim.nc == 1) {
 		if (df > 1 && bayer.empty()) {
+			writeToLogFile("downscale start");
+
 			// mono
 			downscale_mono(content, inDim.nx, inDim.ny, df);
 		}
 		else if (!bayer.empty()) {
+			writeToLogFile("debayer start");
+
 			// bayered 
 			int nbFinalPix = inDim.nx * inDim.ny * 3 / 4;
 			std::valarray<T> debayered = std::valarray<T>(nbFinalPix);
@@ -112,15 +120,18 @@ void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& o
 		// 3 ch color
 		downscale_color(content, inDim.nx, inDim.ny, df);
 	}
+	writeToLogFile("Downscale and or debayer finish. Stretch start");
 
 	StretchParams stretchParams;
 	computeParamsAllChannels(content, &stretchParams, outDim);
 	stretchAllChannels(content, stretchParams, outDim);
+	writeToLogFile("Process finish");
 }
 
 
 template <typename T>
 void setBitmap(const std::valarray<T>& contents, const ImageDim& outDim, unsigned char *pixData) {
+	writeToLogFile("setBitMap start");
 	auto& size = outDim;
 	if (size.nc == 1) {
 		for (int i = 0; i < size.ny*size.nx; i++) {
@@ -138,6 +149,7 @@ void setBitmap(const std::valarray<T>& contents, const ImageDim& outDim, unsigne
 			}
 		}
 	}
+	writeToLogFile("setBitMap finish");
 }
 
 
