@@ -55,7 +55,7 @@ std::map<string, string> readImageHeader(PHDU& image) {
 }
 
 
-FitsImage::FitsImage(string path)
+FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 {
 	writeToLogFile(path.c_str());
 	writeToLogFile("FitsImage constructor");
@@ -68,27 +68,36 @@ FitsImage::FitsImage(string path)
     {
 		writeToLogFile(e.what());
     }
-	PHDU& image = pInfile->pHDU();
-	header = readImageHeader(image);
+	if (!pInfile) {
+		writeToLogFile("CCFits failed");
+		return;
+	}
+	PHDU& imageHDU = pInfile->pHDU();
 
-	_imgDim.nx = static_cast<int>(image.axis(0));
-	_imgDim.ny = static_cast<int>(image.axis(1));
-	_imgDim.nc = static_cast<int>(image.axes() == 3 ? 3 : 1);
-	_imgDim.depth = static_cast<int>(image.bitpix());
+	if (imageHDU.axes() == 0) {
+		writeToLogFile("Image HDU has 0 axes");
+		return;
+	}
+	header = readImageHeader(imageHDU);
 
-	string bayer = header["BAYERPAT"];
-	if (_imgDim.nc == 1 && bayer.empty()) {
+	_inDim.nx = static_cast<int>(imageHDU.axis(0));
+	_inDim.ny = static_cast<int>(imageHDU.axis(1));
+	_inDim.nc = static_cast<int>(imageHDU.axes() == 3 ? 3 : 1);
+	_inDim.depth = static_cast<int>(imageHDU.bitpix());
 		// mono
-		_outDim = { _imgDim.nx, _imgDim.ny, 1, 8 };
+		writeToLogFile("Mono");
+		_outDim = { _inDim.nx, _inDim.ny, 1, 8 };
 	}
 	else {
-		if (_imgDim.nc == 3) {
+		if (_inDim.nc == 3) {
 			// 3ch image
-			_outDim = { _imgDim.nx, _imgDim.ny, 3, 8 };
+			writeToLogFile("3Ch");
+			_outDim = { _inDim.nx, _inDim.ny, 3, 8 };
 		}
-		else if (_imgDim.nc == 1 && !bayer.empty()) {
+		else if (_inDim.nc == 1 && !bayer.empty()) {
 			// bayer image
-			_outDim = { _imgDim.nx / 2, _imgDim.ny / 2, 3, 8 };
+			writeToLogFile("Bayer");
+			_outDim = { _inDim.nx / 2, _inDim.ny / 2, 3, 8 };
 		}
 	}
 	writeToLogFile("FitsImage constructor finish");
@@ -164,13 +173,13 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	if (bitpix == Ishort) {
 		std::valarray<unsigned short> contents;
 		image.read(contents);
-		process(contents, _imgDim, _outDim, bayer, downscale_factor);
+		process(contents, _inDim, _outDim, bayer, downscale_factor);
 		setBitmap(contents, _outDim, pixData);
 	}
 	else {
 		std::valarray<float> contents;
 		image.read(contents);
-		process(contents, _imgDim, _outDim, bayer, downscale_factor);
+		process(contents, _inDim, _outDim, bayer, downscale_factor);
 		setBitmap(contents, _outDim, pixData);
 	}
 }
@@ -178,7 +187,7 @@ void FitsImage::getImagePix(unsigned char * pixData)
 
 ImageDim FitsImage::getDim()
 {
-	return _imgDim;
+	return _inDim;
 }
 
 
