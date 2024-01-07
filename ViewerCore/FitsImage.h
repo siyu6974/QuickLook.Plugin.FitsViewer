@@ -50,6 +50,9 @@ public:
 	void getImagePix(unsigned char *pixData);
 	ImageDim getDim();
 	ImageDim getFinalDim();
+
+private:
+	string _sanitizedBayerMode;
 };
 
 extern "C" {

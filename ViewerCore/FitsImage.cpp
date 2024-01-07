@@ -84,6 +84,19 @@ FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 	_inDim.ny = static_cast<int>(imageHDU.axis(1));
 	_inDim.nc = static_cast<int>(imageHDU.axes() == 3 ? 3 : 1);
 	_inDim.depth = static_cast<int>(imageHDU.bitpix());
+
+	string bayer;
+	auto it = header.find("BAYERPAT");
+	if (it != header.end()) {
+		// has bayer kw in the header
+		bayer = it->second;
+		if (!(bayer.compare("RGGB") == 0 || bayer.compare("BGGR") == 0 || bayer.compare("GRBG") == 0 || bayer.compare("GBRG") == 0)) {
+			bayer = "";
+		}
+	}
+	_sanitizedBayerMode = bayer;
+
+	if (_inDim.nc == 1 && bayer.empty()) {
 		// mono
 		writeToLogFile("Mono");
 		_outDim = { _inDim.nx, _inDim.ny, 1, 8 };
@@ -116,7 +129,7 @@ void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& o
 			downscale_mono(content, inDim.nx, inDim.ny, df);
 		}
 		else if (!bayer.empty()) {
-			writeToLogFile("debayer start");
+			writeToLogFile("debayer start " +  bayer);
 
 			// bayered 
 			int nbFinalPix = inDim.nx * inDim.ny * 3 / 4;
@@ -167,7 +180,7 @@ void FitsImage::getImagePix(unsigned char * pixData)
 	PHDU& image = pInfile->pHDU();
 
 	const int downscale_factor = 1;
-	string bayer = header["BAYERPAT"];
+	string bayer = _sanitizedBayerMode;
 	auto bitpix = image.bitpix();
 
 	if (bitpix == Ishort) {
