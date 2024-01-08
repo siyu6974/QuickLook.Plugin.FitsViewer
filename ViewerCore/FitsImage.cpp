@@ -145,7 +145,7 @@ void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& o
 	writeToLogFile("Downscale and or debayer finish. Stretch start");
 
 	StretchParams stretchParams;
-	computeParamsAllChannels(content, &stretchParams, outDim);
+	computeParamsAllChannels(content, &stretchParams, inDim.depth, outDim);
 	stretchAllChannels(content, stretchParams, outDim);
 	writeToLogFile("Process finish");
 }

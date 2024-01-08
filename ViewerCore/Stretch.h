@@ -34,7 +34,7 @@ struct StretchParams1Channel
 	int max_input;
 
 	// Stretch algorithm parameters
-	float shadows;;
+	float shadows;
 	float highlights;
 	float midtones;
 	// The extension parameters are not yet used.
@@ -69,7 +69,7 @@ T median(std::valarray<T>& values) {
 
 // See section 8.5.7 in above link  https://pixinsight.com/doc/docs/XISF-1.0-spec/XISF-1.0-spec.html
 template <typename T>
-void computeParamsOneChannel(std::valarray<T>& buffer, int offset, StretchParams1Channel *params, int height, int width) {
+void computeParamsOneChannel(std::valarray<T>& buffer, int offset, StretchParams1Channel *params, int inputRange, int height, int width) {
 	// Find the median sample.
 	constexpr int maxSamples = 500000;
 	const int sampleBy = width * height < maxSamples ? 1 : width * height / maxSamples;
@@ -80,28 +80,18 @@ void computeParamsOneChannel(std::valarray<T>& buffer, int offset, StretchParams
 
 	auto& deviations = samples;
 
-	T maxSample = 0;
-	// Can't use abs because of unsigned value substraction
-	for (int i = 0; i < numSamples; i++) {
-		if (medianSample > samples[i])
-			deviations[i] = medianSample - samples[i];
-		else {
-			deviations[i] = samples[i] - medianSample;
-			if (maxSample < samples[i]) {
-				maxSample = samples[i];
-			}
-		}
-	}
-
-	int inputRange = 1;
-	if (maxSample > 256) {
-		inputRange = 65536;
-	}
-	else if (maxSample > 1) {
-		inputRange = 256;
-	}
-	params->max_input = inputRange;
-
+    // Can't use abs because of unsigned value substraction
+    for (int i=0; i<numSamples; i++) {
+        if (medianSample > samples[i])
+            deviations[i] = medianSample - samples[i];
+        else {
+            deviations[i] = samples[i] - medianSample;
+        }
+    }
+	
+    // Maximum possible input value (e.g. 1024*64 - 1 for a 16 bit unsigned int).
+    params->max_input = inputRange > 1 ? inputRange - 1 : inputRange;
+    
 	// Shift everything to 0 -> 1.0.
 	const float medDev = median(deviations);
 	const float normalizedMedian = medianSample / static_cast<float>(inputRange);
@@ -144,9 +134,6 @@ void stretchOneChannel(std::valarray<T>& buffer, int offset,
 
 	// Maximum possible input value (e.g. 1024*64 - 1 for a 16 bit unsigned int).
 	int maxInput = stretch_params.max_input;
-	if (maxInput > 1) {
-		maxInput--;
-	}
 
 	const float midtones = stretch_params.midtones;
 	const float highlights = stretch_params.highlights;
@@ -179,10 +166,48 @@ void stretchOneChannel(std::valarray<T>& buffer, int offset,
 
 
 template <typename T>
-void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
-	const ImageDim& size) {
-	int nbPixPerPlane = size.nx * size.ny;
-	parallel_for(size_t(0), size_t(size.nc), [&](size_t ch) {
+int calculateFloatInputRange(std::valarray<T>& buffer, int offset, int height, int width)
+{
+    constexpr int maxSamples = 500000;
+    const int sampleBy = width * height < maxSamples ? 1 : width * height / maxSamples;
+    const int numSamples = width * height / sampleBy;
+    std::valarray<T> samples = buffer[std::slice(offset, numSamples, sampleBy)];
+    
+    int currentMax = 0;
+    for (int i=0; i<numSamples; i++) {
+        T sample = samples[i];
+        if (sample > 255) {
+            return 65536;
+        }
+        currentMax = fmax(currentMax, sample);
+    }
+    if (currentMax > 1) {
+        return 256;
+    }
+    return 1;
+}
+
+
+template <typename T>
+int getRange(int bitdepth, std::valarray<T>& buffer, int offset, int height, int width) {
+    if (bitdepth > 0) {
+        // integer data type
+        if (bitdepth == 8 || bitdepth == 16) {
+            return pow(2, bitdepth);
+        }
+        return pow(2, 16);
+    } else {
+        // float or double, need to resample
+        return calculateFloatInputRange(buffer, offset, height, width);
+    }
+}
+
+
+template <typename T>
+void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params, int inDepth,
+                             const ImageDim& outDim) {
+	int nbPixPerPlane = outDim.nx * outDim.ny;
+	parallel_for(size_t(0), size_t(outDim.nc), [&](size_t ch) {
 		StretchParams1Channel *channelParam;
 		switch (ch) {
 		case 1:
@@ -195,8 +220,10 @@ void computeParamsAllChannels(std::valarray<T>& buffer, StretchParams *params,
 			channelParam = &params->grey_red;
 			break;
 		}
-		computeParamsOneChannel(buffer, nbPixPerPlane*ch, channelParam,
-			size.ny, size.nx);
+
+		int inputRange = getRange(inDepth, buffer, 0, outDim.ny, outDim.nx);
+        computeParamsOneChannel(buffer, nbPixPerPlane*ch, channelParam, inputRange,
+                                outDim.ny, outDim.nx);
 	});
 }
 
