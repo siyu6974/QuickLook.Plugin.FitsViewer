@@ -114,7 +114,6 @@ namespace StandaloneViewer
                 var _ = Is64 ? FitsImageGetHeader64(ptr, sb) : FitsImageGetHeader32(ptr, sb);
                 string h_str =  sb.ToString();
                 var header = new Dictionary<string, string>();
-                var test = h_str.Split(';');
                 foreach (string entry in h_str.Split(new string[] { "; " }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var kv = entry.Split(':');
@@ -138,8 +137,7 @@ namespace StandaloneViewer
             Console.WriteLine("*********************");
 
             Console.WriteLine(Environment.Is64BitProcess);
-            string path = "C:\\Users\\astro\\Desktop\\QuickLook.Plugin.FitsViewer\\fits_resource\\3ch.fit";
-
+            string path = @"..\..\..\fits_resource\268cNINA.fits";
             var fitsImage = NativeMethods.FitsImageCreate(path);
         
             var header = NativeMethods.FitsImageGetHeader(fitsImage);

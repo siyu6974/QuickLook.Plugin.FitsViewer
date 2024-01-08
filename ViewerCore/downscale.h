@@ -27,35 +27,37 @@
 
 template <typename T>
 void downscale_mono(std::valarray<T>& buf, int width, int height, int factor) {
-	int newWidth = floor(width / factor);
-	int newHeight = floor(height / factor);
+    if (factor == 1) return;
+    
+    int newWidth = floor(width/factor);
+    int newHeight = floor(height/factor);
 
-	for (int i = 0, iout = 0; iout < newHeight; i += factor, iout++) {
-		for (int j = 0, jout = 0; jout < newWidth; j += factor, jout++) {
-			buf[iout*newWidth + jout] = buf[i*width + j];
-		}
-	}
+    for (int i=0, iout=0; iout<newHeight; i+=factor, iout++) {
+        for (int j=0, jout=0; jout<newWidth; j+=factor, jout++) {
+            buf[iout*newWidth + jout] = buf[i*width + j];
+        }
+    }
 }
 
 
 template <typename T>
 void downscale_color(std::valarray<T>& buf, int width, int height, int factor) {
-	int newWidth = floor(width / factor);
-	int newHeight = floor(height / factor);
-	int newPlaneSize = newHeight * newWidth;
-	int planeSize = width * height;
-
-	for (int i = 0, iout = 0; iout < newHeight; i += factor, iout++) {
-		for (int j = 0, jout = 0; jout < newWidth; j += factor, jout++) {
-			buf[iout*newWidth + jout] = buf[i*width + j];
-		}
-	}
-	for (int i = 0, iout = 0; iout < newHeight; i += factor, iout++) {
-		for (int j = 0, jout = 0; jout < newWidth; j += factor, jout++) {
-			buf[newPlaneSize + iout * newWidth + jout] = buf[planeSize + i * width + j];
-			buf[newPlaneSize * 2 + iout * newWidth + jout] = buf[planeSize * 2 + i * width + j];
-		}
-	}
+    int newWidth = floor(width/factor);
+    int newHeight = floor(height/factor);
+    int newPlaneSize = newHeight * newWidth;
+    int planeSize = width * height;
+    
+    for (int i=0, iout=0; iout<newHeight; i+=factor, iout++) {
+        for (int j=0, jout=0; jout<newWidth; j+=factor, jout++) {
+            buf[iout*newWidth + jout] = buf[i*width + j];
+        }
+    }
+    for (int i=0, iout=0; iout<newHeight; i+=factor, iout++) {
+        for (int j=0, jout=0; jout<newWidth; j+=factor, jout++) {
+            buf[newPlaneSize + iout*newWidth + jout] = buf[planeSize + i*width + j];
+            buf[newPlaneSize*2 + iout*newWidth + jout] = buf[planeSize*2 + i*width + j];
+        }
+    }
 }
 
 #endif /* downscale_h */

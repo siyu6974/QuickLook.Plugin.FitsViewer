@@ -57,7 +57,6 @@ std::map<string, string> readImageHeader(PHDU& image) {
 
 FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 {
-	writeToLogFile(path.c_str());
 	writeToLogFile("FitsImage constructor");
 
 	try
