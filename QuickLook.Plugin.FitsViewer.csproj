@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="AnimatedImage.cs" />
     <Compile Include="AnimationProvider.cs" />
+    <Compile Include="GitVersion.cs" />
     <Compile Include="ImagePanel.xaml.cs">
       <DependentUpon>ImagePanel.xaml</DependentUpon>
     </Compile>
@@ -61,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="QuickLook.Plugin.Metadata.Base.config" />
+    <None Include="QuickLook.Plugin.Metadata.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="ImagePanel.xaml">
