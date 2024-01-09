@@ -37,6 +37,9 @@ std::string stringDateTime() {
 }
 
 void writeToLogFile(const std::string& message) {
+#ifndef ENABLE_LOGGING
+    return;
+#endif
     char documentsPath[MAX_PATH];
     if (SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, documentsPath) != S_OK) {
         std::cerr << "Unable to get Documents folder path";
@@ -53,6 +56,9 @@ void writeToLogFile(const std::string& message) {
 }
 
 void writeToLogFile(const std::wstring& message) {
+#ifndef ENABLE_LOGGING
+    return;
+#endif
     wchar_t documentsPath[MAX_PATH];
     if (SHGetFolderPathW(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, documentsPath) != S_OK) {
         std::cerr << "Unable to get Documents folder path";
