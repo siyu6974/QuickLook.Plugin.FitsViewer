@@ -211,7 +211,7 @@ namespace QuickLook.Plugin.ImageViewer
                 }
 
                 if (ShowZoomLevelInfo)
-                    ((Storyboard) zoomLevelInfo.FindResource("StoryboardShowZoomLevelInfo")).Begin();
+                    ((Storyboard)zoomLevelInfo.FindResource("StoryboardShowZoomLevelInfo")).Begin();
             }
         }
 
@@ -261,7 +261,7 @@ namespace QuickLook.Plugin.ImageViewer
         private void ShowMeta()
         {
             textMeta.Inlines.Clear();
-            _meta.ForEach(m =>
+            _meta?.ForEach(m =>
             {
                 if (string.IsNullOrWhiteSpace(m.Key) || string.IsNullOrWhiteSpace(m.Value))
                     return;
