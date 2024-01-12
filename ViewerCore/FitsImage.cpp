@@ -84,6 +84,7 @@ FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 	_inDim.nc = static_cast<int>(imageHDU.axes() == 3 ? 3 : 1);
 	_inDim.depth = static_cast<int>(imageHDU.bitpix());
 
+	// BAYERPAT
 	string bayer;
 	auto it = header.find("BAYERPAT");
 	if (it != header.end()) {
@@ -93,6 +94,20 @@ FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 			bayer = "";
 		}
 	}
+
+	// ROWORDER
+	_isTopDown = true;
+	it = header.find("ROWORDER");
+	if (it != header.end()) {
+		string roworder = it->second;
+		if (roworder.compare("BOTTOM-UP") == 0) {
+			_isTopDown = false;
+			if (!bayer.empty()) {
+				bayer = flipBayerPatternVertically(bayer);
+			}
+		}
+	}
+
 	_sanitizedBayerMode = bayer;
 
 	if (_inDim.nc == 1 && bayer.empty()) {
@@ -151,25 +166,22 @@ void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& o
 
 
 template <typename T>
-void setBitmap(const std::valarray<T>& contents, const ImageDim& outDim, unsigned char *pixData) {
+void setBitmap(const std::valarray<T>& contents, const ImageDim& outDim, unsigned char *pixData, bool shouldFlipV=false) {
 	writeToLogFile("setBitMap start");
 	auto& size = outDim;
-	if (size.nc == 1) {
-		for (int i = 0; i < size.ny*size.nx; i++) {
-			pixData[i] = contents[i];
-		}
-	}
-	else {
-		int nbPixPerPlane = size.nx*size.ny;
 
-		for (int i = 0; i < size.ny; i++) {
-			for (int j = 0; j < size.nx; j++) {
-				pixData[(i* size.nx + j) * 3] = contents[i* size.nx + j];
-				pixData[(i* size.nx + j) * 3 + 1] = contents[i* size.nx + j + nbPixPerPlane];
-				pixData[(i* size.nx + j) * 3 + 2] = contents[i* size.nx + j + nbPixPerPlane * 2];
+	int nbPixPerPlane = size.nx*size.ny;
+
+	for (int i = 0; i < size.ny; i++) {
+		int rowIdx = shouldFlipV ? size.ny - i - 1 : i;
+
+		for (int j = 0; j < size.nx; j++) {
+			for (int c = 0; c < size.nc; c++) {
+				pixData[(i * size.nx + j) * size.nc + c] = contents[rowIdx * size.nx + j + nbPixPerPlane * c];
 			}
 		}
 	}
+	
 	writeToLogFile("setBitMap finish");
 }
 
@@ -186,13 +198,13 @@ void FitsImage::getImagePix(unsigned char * pixData)
 		std::valarray<unsigned short> contents;
 		image.read(contents);
 		process(contents, _inDim, _outDim, bayer, downscale_factor);
-		setBitmap(contents, _outDim, pixData);
+		setBitmap(contents, _outDim, pixData, !_isTopDown);
 	}
 	else {
 		std::valarray<float> contents;
 		image.read(contents);
 		process(contents, _inDim, _outDim, bayer, downscale_factor);
-		setBitmap(contents, _outDim, pixData);
+		setBitmap(contents, _outDim, pixData, !_isTopDown);
 	}
 }
 

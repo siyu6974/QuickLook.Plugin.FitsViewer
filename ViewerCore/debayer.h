@@ -143,5 +143,17 @@ void super_pixel_GRBG(const std::valarray<T>& buf, std::valarray<T>& newbuf, int
 }
 
 
+std::string flipBayerPatternVertically(const std::string& pattern) {
+    if (pattern.length() != 4) {
+        std::cerr << "Invalid Bayer pattern length. Pattern must be 4 characters long." << std::endl;
+        return "";
+    }
+    
+    std::string flippedPattern = pattern;
+    std::swap(flippedPattern[0], flippedPattern[2]); // Swap R and G2
+    std::swap(flippedPattern[1], flippedPattern[3]); // Swap G1 and B
+    
+    return flippedPattern;
+}
 
 #endif /* debayer_h */

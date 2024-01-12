@@ -1,4 +1,4 @@
-/*    
+﻿/*    
 	QuickFits - FITS file preview plugin for QL-win
     Copyright (C) 2021 Siyu Zhang
 
@@ -138,6 +138,7 @@ namespace StandaloneViewer
 
             Console.WriteLine(Environment.Is64BitProcess);
             string path = @"..\..\..\fits_resource\268cNINA.fits";
+            //string path = @"..\..\..\fits_resource\2023-10-21T10-45-02_r_-79.25_300.0s_0092.fits";
             var fitsImage = NativeMethods.FitsImageCreate(path);
         
             var header = NativeMethods.FitsImageGetHeader(fitsImage);

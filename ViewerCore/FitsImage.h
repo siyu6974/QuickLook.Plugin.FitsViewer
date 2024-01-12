@@ -53,6 +53,7 @@ public:
 
 private:
 	string _sanitizedBayerMode;
+	boolean _isTopDown;
 };
 
 extern "C" {
