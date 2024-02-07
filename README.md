@@ -23,6 +23,8 @@ A short video demo & instruction is available [here](https://youtu.be/oMexMV3Yx3
 5. Restart QuickLook (find the icon on the system tray, right-click Quit, and relaunch) / or just restart your PC
 6. Enjoy, try hit the space key on a FITS file
 
+You can also find the mac version [here](https://apps.apple.com/us/app/quickfits/id1551075981?mt=12)  
+
 ## Known issues
 The plugin will crash if
 - the file path contains non ASCII characters (wstring on Windows is a pain)
