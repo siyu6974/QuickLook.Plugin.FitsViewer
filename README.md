@@ -5,6 +5,9 @@ FITS image Plugin for QL-win, featuring
 - auto stretch, producing similar image as PI
 - FITS header available via the little info icon on the top-right corner
 
+## Demo
+![Demo](demo.gif)
+
 
 ## Typical usecases
 * in the field: experiment exposure/gain combination 
@@ -62,5 +65,3 @@ It uses third party libraries and code released under their repective licenses, 
 - cfitsio: [link](https://github.com/healpy/cfitsio/blob/master/License.txt)
 - QuickLook: GPL3.0
 
-## Demo
-![Demo](demo.gif)
