@@ -146,7 +146,7 @@ void process(std::valarray<T>& content, const ImageDim& inDim, const ImageDim& o
 			writeToLogFile("debayer start " +  bayer);
 
 			// bayered 
-			int nbFinalPix = inDim.nx * inDim.ny * 3 / 4;
+			int nbFinalPix = outDim.nx * outDim.ny * 3;
 			std::valarray<T> debayered = std::valarray<T>(nbFinalPix);
 			super_pixel(content, debayered, inDim.nx, inDim.ny, bayer, df);
 			content = debayered;
