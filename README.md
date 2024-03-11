@@ -5,6 +5,9 @@ FITS image Plugin for QL-win, featuring
 - auto stretch, producing similar image as PI
 - FITS header available via the little info icon on the top-right corner
 
+## Demo
+![Demo](demo.gif)
+
 
 ## Typical usecases
 * in the field: experiment exposure/gain combination 
@@ -19,6 +22,8 @@ A short video demo & instruction is available [here](https://youtu.be/oMexMV3Yx3
 4. Select it and then hit the space key, click "click here to install this plugin"
 5. Restart QuickLook (find the icon on the system tray, right-click Quit, and relaunch) / or just restart your PC
 6. Enjoy, try hit the space key on a FITS file
+
+You can also find the mac version [here](https://apps.apple.com/us/app/quickfits/id1551075981?mt=12)  
 
 ## Known issues
 The plugin will crash if
@@ -62,5 +67,3 @@ It uses third party libraries and code released under their repective licenses, 
 - cfitsio: [link](https://github.com/healpy/cfitsio/blob/master/License.txt)
 - QuickLook: GPL3.0
 
-## Demo
-![Demo](demo.gif)
