@@ -67,8 +67,8 @@ template <typename T>
 void super_pixel_RGGB(const std::valarray<T>& buf, std::valarray<T>& newbuf, int width, int height, int factor) {
     int outRowLength = width / (2 * factor);
     int outPlaneSize = outRowLength * (height / (2 * factor));
-    for (int row = 0, iout = 0; row < height; row += 2 * factor, iout++) {
-        for (int col = 0, jout = 0; col < width; col += 2 * factor, jout++) {
+    for (int row = 0, iout = 0; row + 1 < height; row += 2 * factor, iout++) {
+        for (int col = 0, jout = 0; col + 1 < width; col += 2 * factor, jout++) {
             int idx = iout * outRowLength + jout;
             int cur = row * width + col;
             int right = cur + 1;
@@ -88,8 +88,8 @@ template <typename T>
 void super_pixel_BGGR(const std::valarray<T>& buf, std::valarray<T>& newbuf, int width, int height, int factor) {
     int outRowLength = width / (2 * factor);
     int outPlaneSize = outRowLength * (height / (2 * factor));
-    for (int row = 0, iout = 0; row < height; row += 2 * factor, iout++) {
-        for (int col = 0, jout = 0; col < width; col += 2 * factor, jout++) {
+    for (int row = 0, iout = 0; row + 1 < height; row += 2 * factor, iout++) {
+        for (int col = 0, jout = 0; col + 1 < width; col += 2 * factor, jout++) {
             int idx = iout * outRowLength + jout;
             int cur = row * width + col;
             int right = cur + 1;
@@ -109,8 +109,8 @@ template <typename T>
 void super_pixel_GBRG(const std::valarray<T>& buf, std::valarray<T>& newbuf, int width, int height, int factor) {
     int outRowLength = width / (2 * factor);
     int outPlaneSize = outRowLength * (height / (2 * factor));
-    for (int row = 0, iout = 0; row < height; row += 2 * factor, iout++) {
-        for (int col = 0, jout = 0; col < width; col += 2 * factor, jout++) {
+    for (int row = 0, iout = 0; row + 1 < height; row += 2 * factor, iout++) {
+        for (int col = 0, jout = 0; col + 1 < width; col += 2 * factor, jout++) {
             int idx = iout * outRowLength + jout;
             int cur = row * width + col;
             int right = cur + 1;
@@ -130,8 +130,8 @@ template <typename T>
 void super_pixel_GRBG(const std::valarray<T>& buf, std::valarray<T>& newbuf, int width, int height, int factor) {
     int outRowLength = width / (2 * factor);
     int outPlaneSize = outRowLength * (height / (2 * factor));
-    for (int row = 0, iout = 0; row < height; row += 2 * factor, iout++) {
-        for (int col = 0, jout = 0; col < width; col += 2 * factor, jout++) {
+    for (int row = 0, iout = 0; row + 1 < height; row += 2 * factor, iout++) {
+        for (int col = 0, jout = 0; col + 1 < width; col += 2 * factor, jout++) {
             int idx = iout * outRowLength + jout;
             int cur = row * width + col;
             int right = cur + 1;
