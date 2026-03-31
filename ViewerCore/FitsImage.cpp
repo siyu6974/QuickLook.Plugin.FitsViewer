@@ -96,15 +96,15 @@ FitsImage::FitsImage(string path) : _inDim{}, _outDim{}
 	}
 
 	// ROWORDER
+	// BAYERPAT is always defined at the FITS coordinate origin (bottom-left of the image).
+	// For BOTTOM-UP files, contents[0] IS the bottom-left pixel, so BAYERPAT applies to
+	// the buffer without any transformation. Only the output bitmap needs to be flipped.
 	_isTopDown = true;
 	it = header.find("ROWORDER");
 	if (it != header.end()) {
 		string roworder = it->second;
 		if (roworder.compare("BOTTOM-UP") == 0) {
 			_isTopDown = false;
-			if (!bayer.empty()) {
-				bayer = flipBayerPatternVertically(bayer);
-			}
 		}
 	}
 

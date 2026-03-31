@@ -51,7 +51,7 @@ void super_pixel(const std::valarray<T>& buf, std::valarray<T>& newbuf, int widt
         super_pixel_BGGR(buf, newbuf, width, height, factor);
     }
     else if (pattern == "GBRG") {
-        super_pixel_GRBG(buf, newbuf, width, height, factor);
+        super_pixel_GBRG(buf, newbuf, width, height, factor);
     }
     else if (pattern == "GRBG") {
         super_pixel_GRBG(buf, newbuf, width, height, factor);
